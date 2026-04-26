@@ -8,14 +8,26 @@ on:
 jobs:
   check-friends:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24 # 升级到 Node 24，解决警告
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
 
       - name: 运行巡检脚本
         env:

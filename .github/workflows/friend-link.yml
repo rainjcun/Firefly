@@ -70,7 +70,7 @@ jobs:
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
               name: 'pending'
-            });
+            }).catch(() => {});
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -94,7 +94,7 @@ jobs:
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
               name: 'pending'
-            });
+            }).catch(() => {});
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

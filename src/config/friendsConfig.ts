@@ -1,5 +1,6 @@
-// 👇 【修改点1】给 type 添加 type-only 前缀，符合 Biome 规范
 import type { FriendLink, FriendsPageConfig } from "../types/config";
+
+// 可以在src/content/spec/friends.md中编写友链页面下方的自定义内容
 
 // 友链页面配置
 export const friendsPageConfig: FriendsPageConfig = {
@@ -20,6 +21,7 @@ export const friendsConfig: FriendLink[] = [
 		tags: ["Blog"],
 		weight: 10,
 		enabled: true,
+		issue_id: 0, // 👈 只加这一行
 	},
 	{
 		title: "椰汁の主页",
@@ -29,27 +31,27 @@ export const friendsConfig: FriendLink[] = [
 		tags: ["Blog"],
 		weight: 10,
 		enabled: true,
+		issue_id: 0, // 👈 只加这一行
 	},
 	{
 		title: "UpXuu's blog",
-		imgurl: "https://upxuu.com/images/202602145619.jpg",
+		imgurl: "https://upxuu.com/images/20260214145619.jpg",
 		desc: "逐光而上！",
 		siteurl: "https://upxuu.com",
 		tags: ["Blog"],
 		weight: 10,
 		enabled: true,
+		issue_id: 0, // 👈 只加这一行
 	},
-
-	// ↓↓ 自动化友链写入位置（请勿手动修改） ↓↓
 ];
 
-// 👇 【修改点2】函数名与导出顺序严格按字母排序，修复 Biome 错误
+// 获取启用的友链并进行排序
 export const getEnabledFriends = (): FriendLink[] => {
 	const friends = friendsConfig.filter((friend) => friend.enabled);
 
 	if (friendsPageConfig.randomizeSort) {
-		return friends.toSorted(() => Math.random() - 0.5);
+		return friends.sort(() => Math.random() - 0.5);
 	}
 
-	return friends.toSorted((a, b) => b.weight - a.weight);
+	return friends.sort((a, b) => b.weight - a.weight);
 };

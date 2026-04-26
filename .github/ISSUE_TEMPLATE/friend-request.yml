@@ -1,38 +1,71 @@
 name: 友链申请
-description: 申请互换友链
-labels: ["friend-request"]
+description: 提交友链互换申请
+title: "[友链申请] "
+labels: ["pending"]
+assignees:
+  - 你的GitHub用户名
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 💛 友链申请说明
+        请先将本站添加到您的友链页面，再提交申请。
+
+        本站信息：
+        - 名称：你的站点名称
+        - 链接：https://your-site.com
+        - 头像：https://your-site.com/avatar.jpg
+        - 描述：你的站点描述
+
   - type: input
-    id: name
+    id: site_name
     attributes:
       label: 网站名称
+      placeholder: 例如：我的小站
     validations:
       required: true
 
   - type: input
-    id: url
+    id: site_url
     attributes:
-      label: 网站首页地址
+      label: 网站链接
+      description: 你的网站首页地址（包含 https://）
+      placeholder: https://example.com
     validations:
       required: true
 
   - type: input
-    id: friend_page
+    id: friend_page_url
     attributes:
-      label: 你的友链页面地址
+      label: 友链页面地址
+      description: 你网站上添加了本站友链的页面链接
+      placeholder: https://example.com/friends
     validations:
       required: true
 
   - type: input
-    id: avatar
-    attributes:
-      label: 网站头像
-    validations:
-      required: true
-
-  - type: textarea
-    id: desc
+    id: site_desc
     attributes:
       label: 网站描述
+      description: 一句话介绍你的网站
+      placeholder: 记录技术与生活的个人博客
     validations:
       required: true
+
+  - type: input
+    id: site_avatar
+    attributes:
+      label: 网站头像 URL
+      description: 你的网站头像/Logo 图片链接（可选，不填则使用默认头像）
+      placeholder: https://example.com/avatar.png
+
+  - type: dropdown
+    id: site_tag
+    attributes:
+      label: 网站标签
+      options:
+        - Blog
+        - 技术
+        - 生活
+        - 其他
+      default: 0

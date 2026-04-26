@@ -1,0 +1,13 @@
+name: 空白工作流（备用）
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 自动构建
+        run: echo "自动部署触发"

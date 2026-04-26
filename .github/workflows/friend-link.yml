@@ -1,9 +1,3 @@
-name: 友链申请自动化
-
-on:
-  issues:
-    types: [opened, reopened, edited]
-
 jobs:
   validate-and-add-friend:
     runs-on: ubuntu-latest
@@ -14,13 +8,18 @@ jobs:
       - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24 # 顺便升级 Node 24，解决警告
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9 # 用你项目对应的 pnpm 版本，比如 9 或 10
 
       - name: 安装依赖
-        run: npm ci
+        run: pnpm install --frozen-lockfile # 用 pnpm 安装，而不是 npm ci
 
       - name: 安装 Playwright 浏览器
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: 运行验证脚本
         id: validate

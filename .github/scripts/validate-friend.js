@@ -1,12 +1,13 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 // -------------------------- 配置项（请修改为你的信息） --------------------------
 const SITE_INFO = {
   name: "你的站点名称",
-  url: "https://fqzlr.com",
-  avatar: "https://fqzlr.com/avatar.jpg",
+  url: "https://your-site.com",
+  avatar: "https://your-site.com/avatar.jpg",
   desc: "你的站点描述"
 };
 
@@ -84,19 +85,38 @@ function updateFriendsConfig(data, issueId) {
     issue_id: ${issueId},
   },`;
 
-  const match = configContent.match(/export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\];/);
+  const arrayRegex = /export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\];/;
+  const match = configContent.match(arrayRegex);
+  
   if (!match) {
     throw new Error('无法找到 friendsConfig 数组定义');
   }
   
-  const existingList = match[1];
+  let existingList = match[1];
+  
+  // 如果现有列表不为空且不以换行结尾，添加换行
+  if (existingList.trim() !== "" && !existingList.endsWith('\n')) {
+    existingList = existingList + '\n';
+  }
+  
   const updatedContent = configContent.replace(
-    /export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\];/,
+    arrayRegex,
     `export const friendsConfig: FriendLink[] = [${existingList}${newFriend}\n];`
   );
 
   fs.writeFileSync(FRIENDS_CONFIG_PATH, updatedContent, 'utf8');
   console.log('✅ 友链配置已更新');
+  
+  // 运行 biome 格式化
+  try {
+    execSync('npx biome format --write src/config/friendsConfig.ts', { 
+      stdio: 'inherit',
+      cwd: path.join(__dirname, '../..')
+    });
+    console.log('✅ 代码格式化完成');
+  } catch (error) {
+    console.log('⚠️ Biome 格式化失败，请手动运行: npx biome format --write src/config/friendsConfig.ts');
+  }
 }
 
 function isDuplicate(data) {

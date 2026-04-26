@@ -24,50 +24,70 @@ function parseIssueBody(body) {
     site_tag: 'Blog'
   };
 
-  // 匹配各种可能的键名
   const lines = body.split('\n');
+  let pendingField = null;
+
+  const assignField = (field, value) => {
+    if (!value) return;
+    const trimmed = value.trim();
+    if (!trimmed) return;
+
+    switch (field) {
+      case 'site_name':
+        data.site_name = trimmed;
+        break;
+      case 'site_url':
+        if (trimmed.startsWith('http')) data.site_url = trimmed;
+        break;
+      case 'friend_page_url':
+        if (trimmed.startsWith('http')) data.friend_page_url = trimmed;
+        break;
+      case 'site_desc':
+        data.site_desc = trimmed;
+        break;
+      case 'site_avatar':
+        if (trimmed.startsWith('http')) data.site_avatar = trimmed;
+        break;
+      case 'site_tag':
+        data.site_tag = trimmed;
+        break;
+    }
+  };
+
   for (const line of lines) {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('---')) continue;
+    if (!trimmed) continue;
 
-    // 网站名称/站点名称
-    if (/名称|标题/.test(trimmed) && /[:：]/.test(trimmed)) {
-      const [_, value] = trimmed.split(/[:：]/);
-      if (value?.trim()) data.site_name = value.trim();
+    // 解析标题行 + 下行值形式
+    if (trimmed.startsWith('#')) {
+      pendingField = null;
+      if (/名称|标题/.test(trimmed)) pendingField = 'site_name';
+      else if (/网站链接|站点链接|链接|网址/.test(trimmed)) pendingField = 'site_url';
+      else if (/友链页面|友链地址/.test(trimmed)) pendingField = 'friend_page_url';
+      else if (/描述|简介/.test(trimmed)) pendingField = 'site_desc';
+      else if (/头像|图标/.test(trimmed)) pendingField = 'site_avatar';
+      else if (/标签|分类/.test(trimmed)) pendingField = 'site_tag';
+      continue;
     }
-    // 网站链接/站点链接
-    else if (/链接|网址|地址/.test(trimmed) && /[:：]/.test(trimmed)) {
-      const [_, value] = trimmed.split(/[:：]/);
-      if (value?.trim()) {
-        const url = value.trim();
-        if (url.startsWith('http')) data.site_url = url;
-      }
+
+    if (pendingField) {
+      assignField(pendingField, trimmed);
+      pendingField = null;
+      continue;
     }
-    // 友链页面
-    else if (/友链/.test(trimmed) && /[:：]/.test(trimmed)) {
-      const [_, value] = trimmed.split(/[:：]/);
-      if (value?.trim()) {
-        const url = value.trim();
-        if (url.startsWith('http')) data.friend_page_url = url;
-      }
-    }
-    // 描述
-    else if (/描述|简介/.test(trimmed) && /[:：]/.test(trimmed)) {
-      const [_, value] = trimmed.split(/[:：]/);
-      if (value?.trim()) data.site_desc = value.trim();
-    }
-    // 头像
-    else if (/头像|图标/.test(trimmed) && /[:：]/.test(trimmed)) {
-      const [_, value] = trimmed.split(/[:：]/);
-      if (value?.trim()) {
-        const url = value.trim();
-        if (url.startsWith('http')) data.site_avatar = url;
-      }
-    }
-    // 标签
-    else if (/标签|分类/.test(trimmed) && /[:：]/.test(trimmed)) {
-      const [_, value] = trimmed.split(/[:：]/);
-      if (value?.trim()) data.site_tag = value.trim();
+
+    // 解析 key: value 形式
+    if (/[:：]/.test(trimmed)) {
+      const [key, ...rest] = trimmed.split(/[:：]/);
+      const value = rest.join('').trim();
+      if (!value) continue;
+
+      if (/名称|标题/.test(key)) assignField('site_name', value);
+      else if (/网站链接|站点链接|链接|网址|地址/.test(key)) assignField('site_url', value);
+      else if (/友链页面|友链地址/.test(key)) assignField('friend_page_url', value);
+      else if (/描述|简介/.test(key)) assignField('site_desc', value);
+      else if (/头像|图标/.test(key)) assignField('site_avatar', value);
+      else if (/标签|分类/.test(key)) assignField('site_tag', value);
     }
   }
 

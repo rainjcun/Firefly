@@ -1,8 +1,9 @@
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const { URL } = require('node:url');
 
-// -------------------------- 配置项（已改成你的真实信息） --------------------------
+// -------------------------- 配置项（请替换为你的真实信息） --------------------------
 const SITE_INFO = {
   name: "fqzlr",
   url: "https://fqzlr.com/",
@@ -11,9 +12,21 @@ const SITE_INFO = {
 };
 
 const FRIENDS_CONFIG_PATH = path.join(__dirname, '../../src/config/friendsConfig.ts');
-// -------------------------------------------------------------
+const DEFAULT_TAG = 'Blog';
+// -----------------------------------------------------------------------------
 
-// 【通用解析器】不依赖固定标题，直接按常见键名匹配
+function normalizeUrl(value) {
+  try {
+    return new URL(value.trim()).toString();
+  } catch {
+    return '';
+  }
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function parseIssueBody(body) {
   const data = {
     site_name: '',
@@ -21,10 +34,10 @@ function parseIssueBody(body) {
     friend_page_url: '',
     site_desc: '',
     site_avatar: '',
-    site_tag: 'Blog'
+    site_tag: DEFAULT_TAG
   };
 
-  const lines = body.split('\n');
+  const lines = body.split(/\r?\n/).map((line) => line.trim());
   let pendingField = null;
 
   const assignField = (field, value) => {
@@ -37,48 +50,60 @@ function parseIssueBody(body) {
         data.site_name = trimmed;
         break;
       case 'site_url':
-        if (trimmed.startsWith('http')) data.site_url = trimmed;
+        data.site_url = normalizeUrl(trimmed);
         break;
       case 'friend_page_url':
-        if (trimmed.startsWith('http')) data.friend_page_url = trimmed;
+        data.friend_page_url = normalizeUrl(trimmed);
         break;
       case 'site_desc':
         data.site_desc = trimmed;
         break;
       case 'site_avatar':
-        if (trimmed.startsWith('http')) data.site_avatar = trimmed;
+        data.site_avatar = normalizeUrl(trimmed);
         break;
       case 'site_tag':
-        data.site_tag = trimmed;
+        data.site_tag = trimmed || DEFAULT_TAG;
         break;
     }
   };
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (!line) continue;
 
-    // 解析标题行 + 下行值形式
-    if (trimmed.startsWith('#')) {
-      pendingField = null;
-      if (/名称|标题/.test(trimmed)) pendingField = 'site_name';
-      else if (/网站链接|站点链接|链接|网址/.test(trimmed)) pendingField = 'site_url';
-      else if (/友链页面|友链地址/.test(trimmed)) pendingField = 'friend_page_url';
-      else if (/描述|简介/.test(trimmed)) pendingField = 'site_desc';
-      else if (/头像|图标/.test(trimmed)) pendingField = 'site_avatar';
-      else if (/标签|分类/.test(trimmed)) pendingField = 'site_tag';
+    if (/^#+\s*(网站名称|名称|站点名称)/.test(line)) {
+      pendingField = 'site_name';
+      continue;
+    }
+    if (/^#+\s*(网站链接|站点链接|链接|网址|地址)/.test(line)) {
+      pendingField = 'site_url';
+      continue;
+    }
+    if (/^#+\s*(友链页面|友链地址)/.test(line)) {
+      pendingField = 'friend_page_url';
+      continue;
+    }
+    if (/^#+\s*(网站描述|描述|简介)/.test(line)) {
+      pendingField = 'site_desc';
+      continue;
+    }
+    if (/^#+\s*(网站头像|头像|图标)/.test(line)) {
+      pendingField = 'site_avatar';
+      continue;
+    }
+    if (/^#+\s*(网站标签|标签|分类)/.test(line)) {
+      pendingField = 'site_tag';
       continue;
     }
 
     if (pendingField) {
-      assignField(pendingField, trimmed);
+      assignField(pendingField, line);
       pendingField = null;
       continue;
     }
 
-    // 解析 key: value 形式
-    if (/[:：]/.test(trimmed)) {
-      const [key, ...rest] = trimmed.split(/[:：]/);
+    if (/[:：]/.test(line)) {
+      const [key, ...rest] = line.split(/[:：]/);
       const value = rest.join('').trim();
       if (!value) continue;
 
@@ -91,14 +116,20 @@ function parseIssueBody(body) {
     }
   }
 
-  console.log("📋 解析结果：", data);
+  console.log('📋 解析结果：', data);
   return data;
 }
 
-// 验证友链
+function hasDuplicateSite(configContent, url) {
+  if (!url) return false;
+  const escaped = escapeRegExp(url);
+  const siteurlRegex = new RegExp(`siteurl:\s*['\"]${escaped}['\"]`, 'i');
+  return siteurlRegex.test(configContent);
+}
+
 async function validateFriendLink(pageUrl) {
   if (!pageUrl) {
-    console.error("❌ 友链页面地址为空");
+    console.error('❌ 友链页面地址为空');
     return false;
   }
 
@@ -115,45 +146,52 @@ async function validateFriendLink(pageUrl) {
     return hasLink;
   } catch (error) {
     await browser.close();
-    console.error('页面访问失败:', error.message);
+    console.error('页面访问失败:', error.message || error);
     return false;
   }
 }
 
-// 更新友链配置
+function buildFriendConfigEntry(data, issueId) {
+  const avatar = data.site_avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(data.site_name)}`;
+  const tag = data.site_tag || DEFAULT_TAG;
+  return `	{
+		title: "${data.site_name}",
+		imgurl: "${avatar}",
+		desc: "${data.site_desc}",
+		siteurl: "${data.site_url}",
+		tags: ["${tag}"],
+		weight: 5,
+		enabled: true,
+		issue_id: ${issueId || 0},
+	},\n`;
+}
+
 function updateFriendsConfig(data, issueId) {
-  if (!data.site_name || !data.site_url) {
-    console.error("❌ 站点名称或链接不能为空，无法添加");
+  const configContent = fs.readFileSync(FRIENDS_CONFIG_PATH, 'utf8');
+  if (hasDuplicateSite(configContent, data.site_url)) {
+    console.error('❌ 该站点已存在于 friendsConfig.ts，避免重复添加');
     return false;
   }
 
-  const configContent = fs.readFileSync(FRIENDS_CONFIG_PATH, 'utf8');
-  const newFriend = `  {
-    title: "${data.site_name}",
-    imgurl: "${data.site_avatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(data.site_name)}`}",
-    desc: "${data.site_desc}",
-    siteurl: "${data.site_url}",
-    tags: ["${data.site_tag}"],
-    weight: 5,
-    enabled: true,
-    issue_id: ${issueId},
-  },`;
+  const entry = buildFriendConfigEntry(data, issueId);
+  const regex = /export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\n\];/;
 
-  const updatedContent = configContent.replace(
-    /export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\];/,
-    (_match, list) => {
-      return `export const friendsConfig: FriendLink[] = [${list}${newFriend}\n];`;
-    }
-  );
+  if (!regex.test(configContent)) {
+    console.error('❌ 无法解析 friendsConfig.ts，请检查文件结构是否正确');
+    return false;
+  }
+
+  const updatedContent = configContent.replace(regex, (_match, list) => {
+    return `export const friendsConfig: FriendLink[] = [${list}${entry}];`;
+  });
 
   fs.writeFileSync(FRIENDS_CONFIG_PATH, updatedContent, 'utf8');
   console.log('✅ 友链配置已更新');
   return true;
 }
 
-// 主函数
 async function main() {
-  const issueId = process.env.ISSUE_ID;
+  const issueId = Number(process.env.ISSUE_ID || 0);
   const issueBody = process.env.GITHUB_EVENT_ISSUE_BODY || '';
 
   if (!issueBody) {
@@ -162,27 +200,30 @@ async function main() {
   }
 
   const formData = parseIssueBody(issueBody);
-
-  // 检查必填项
   if (!formData.site_name || !formData.site_url || !formData.friend_page_url) {
-    console.error("❌ 表单信息不完整，请确保填写了名称、链接和友链页面地址");
+    console.error('❌ 表单信息不完整，请确保填写名称、链接和友链页面地址');
     process.exit(1);
   }
 
-  const isValid = await validateFriendLink(formData.friend_page_url);
-  if (!isValid) {
-    console.error('❌ 友链验证失败，未找到本站信息');
+  if (!normalizeUrl(formData.site_url) || !normalizeUrl(formData.friend_page_url)) {
+    console.error('❌ 站点链接或友链页面地址不是有效 URL');
+    process.exit(1);
+  }
+
+  const valid = await validateFriendLink(formData.friend_page_url);
+  if (!valid) {
+    console.error('❌ 友链验证失败，未在目标页面中找到本站信息');
     process.exit(1);
   }
 
   const success = updateFriendsConfig(formData, issueId);
   if (!success) process.exit(1);
 
-  console.log("✅ 全部成功");
+  console.log('✅ 友链申请已成功写入 friendsConfig.ts');
   process.exit(0);
 }
 
-main().catch(err => {
-  console.error('❌ 脚本执行失败:', err);
+main().catch((error) => {
+  console.error('❌ 脚本执行失败:', error);
   process.exit(1);
 });

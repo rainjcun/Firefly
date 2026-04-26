@@ -37,7 +37,8 @@ jobs:
         id: validate
         env:
           ISSUE_ID: ${{ github.event.issue.number }}
-        run: node .github/scripts/validate-friend.js
+          GITHUB_EVENT_ISSUE_BODY: ${{ github.event.issue.body }}
+        run: node .github/scripts/validate-friend.cjs
 
       - name: 配置 Git 用户
         if: steps.validate.outputs.status == 'success'

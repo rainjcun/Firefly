@@ -1,22 +1,33 @@
+name: 友链申请自动化
+
+on:
+  issues:
+    types: [opened, reopened, edited]
+
 jobs:
   validate-and-add-friend:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24 # 顺便升级 Node 24，解决警告
+          node-version: 24
 
       - name: 安装 pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # 用你项目对应的 pnpm 版本，比如 9 或 10
+          version: 9 # 和你项目使用的 pnpm 版本保持一致
 
       - name: 安装依赖
-        run: pnpm install --frozen-lockfile # 用 pnpm 安装，而不是 npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: 安装 Playwright 浏览器
         run: pnpm exec playwright install --with-deps chromium
@@ -24,7 +35,6 @@ jobs:
       - name: 运行验证脚本
         id: validate
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_ID: ${{ github.event.issue.number }}
         run: node .github/scripts/validate-friend.js
 
@@ -62,7 +72,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
-              body: '✅ 友链验证通过！已自动添加到本站友链列表，下次部署即可生效。'
+              body: '✅ 友链验证通过！已自动添加到本站友链列表，Cloudflare 部署完成后即可生效。'
             })
 
       - name: 验证失败处理

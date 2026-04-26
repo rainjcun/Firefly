@@ -2,64 +2,45 @@ name: 友链申请自动化
 
 on:
   issues:
-    types: [opened, reopened]
-
-permissions:
-  issues: write
-  contents: write
+    types: [opened, reopened, edited]
 
 jobs:
   validate-and-add-friend:
     runs-on: ubuntu-latest
-    if: contains(github.event.issue.labels.*.name, 'pending')
-    
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 22
+          cache: 'npm'
 
       - name: 安装依赖
-        run: |
-          npm install playwright
-          npm install @playwright/browser-chromium
-          npm install @biomejs/biome
+        run: npm ci
 
       - name: 安装 Playwright 浏览器
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps chromium
 
       - name: 运行验证脚本
         id: validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_ID: ${{ github.event.issue.number }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
         run: node .github/scripts/validate-friend.js
-
-      - name: 运行 Biome 格式化（修复所有问题）
-        if: steps.validate.outputs.status == 'success'
-        run: npx biome format --write ./src
-
-      - name: 运行 Biome 检查（确保通过）
-        if: steps.validate.outputs.status == 'success'
-        run: npx biome ci ./src --reporter=github || npx biome check --write --unsafe ./src
 
       - name: 配置 Git 用户
         if: steps.validate.outputs.status == 'success'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: 提交并推送修改
         if: steps.validate.outputs.status == 'success'
         run: |
-          git add .
-          git commit -m "🤖 自动添加友链 #${{ github.event.issue.number }}" || echo "无需提交"
+          git add src/config/friendsConfig.ts
+          git commit -m "🤖 自动添加友链 #${{ github.event.issue.number }}"
           git push
 
       - name: 标记 Issue 为已完成
@@ -67,45 +48,45 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.issues.addLabels({
+            github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
               labels: ['completed']
-            });
-            await github.rest.issues.removeLabel({
+            })
+            github.rest.issues.removeLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
               name: 'pending'
-            });
-            await github.rest.issues.createComment({
+            })
+            github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
-              body: '✅ 友链验证通过！已自动添加到本站友链列表，下次部署即可生效。\n\n感谢申请！'
-            });
+              body: '✅ 友链验证通过！已自动添加到本站友链列表，下次部署即可生效。'
+            })
 
       - name: 验证失败处理
         if: steps.validate.outputs.status == 'failed'
         uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.issues.addLabels({
+            github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
               labels: ['needs-update']
-            });
-            await github.rest.issues.removeLabel({
+            })
+            github.rest.issues.removeLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
               name: 'pending'
-            });
-            await github.rest.issues.createComment({
+            })
+            github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: ${{ github.event.issue.number }},
-              body: '❌ 友链验证失败，请检查：\n\n1. 友链页面是否可正常访问\n2. 是否已正确添加本站友链信息\n\n修复后重新提交 Issue 即可。'
-            });
+              body: '❌ 友链验证失败，请检查：\n1. 友链页面是否可正常访问\n2. 是否已正确添加本站友链信息\n修复后在本 Issue 下回复任意内容即可重新验证。'
+            })

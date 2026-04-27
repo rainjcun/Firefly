@@ -1,0 +1,298 @@
+name: 🤝 自动更新友链
+
+on:
+  issues:
+    types: [opened, reopened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  update-friends:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 安装 Playwright
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install --with-deps chromium
+
+      - name: 解析 Issue 并验证友链
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const { chromium } = require('playwright');
+
+            const isIssueOpen = context.eventName === 'issues' &&
+              (context.payload.action === 'opened' || context.payload.action === 'reopened');
+            const isComment = context.eventName === 'issue_comment';
+
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const isFriendRequest = body.includes('### 网站名称') && body.includes('### 网站链接');
+
+            if (!isFriendRequest) {
+              console.log('非友链申请 issue，跳过');
+              return;
+            }
+
+            // 新建 issue 时添加 "验证中" 标签
+            if (context.payload.action === 'opened') {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['验证中']
+              });
+              console.log('已添加验证中标签');
+            }
+
+            // 评论触发时，只有 issue 作者评论才重新验证
+            if (isComment) {
+              const isAuthor = context.payload.comment.user.login === issue.user.login;
+              if (!isAuthor) {
+                console.log('评论不是来自作者，跳过');
+                return;
+              }
+              console.log('作者请求重新验证');
+            }
+
+            function extractField(name, text) {
+              const regex = new RegExp(`### ${name}\\s*\\n([^#]+)`, 'i');
+              const match = text.match(regex);
+              return match ? match[1].trim() : null;
+            }
+
+            # --------------- 【修改1：字段读取逻辑不变，但后续映射到TS字段】---------------
+            const name = extractField('网站名称', body); // 对应TS的title
+            const url = extractField('网站链接', body); // 对应TS的siteurl
+            const friendUrl = extractField('友链页面 URL', body);
+            const description = extractField('网站描述', body); // 对应TS的desc
+            const avatar = extractField('网站头像 URL', body) || ''; // 对应TS的imgurl
+
+            if (!name || !url || !friendUrl) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '❌ 友链信息不完整，请确保填写了网站名称、网站链接和友链页面 URL。'
+              });
+              return;
+            }
+
+            const cleanUrl = url.replace(/\/$/, '');
+            const cleanFriendUrl = friendUrl.replace(/\/$/, '');
+            const cleanAvatar = avatar ? avatar.trim() : '';
+
+            # --------------- 【原有逻辑不变：验证友链页面是否可访问】---------------
+            console.log(`正在检查友链页面: ${cleanFriendUrl}`);
+            const browser = await chromium.launch({ headless: true });
+            const context_browser = await browser.newContext({
+              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            });
+            const page = await context_browser.newPage();
+
+            let connError = null;
+            let actualUrl = cleanFriendUrl;
+            let pageTitle = '';
+            let statusCode = null;
+            const retries = 3;
+
+            for (let i = 0; i < retries; i++) {
+              try {
+                const response = await page.goto(cleanFriendUrl, {
+                  waitUntil: 'domcontentloaded',
+                  timeout: 12000
+                });
+                actualUrl = page.url();
+                pageTitle = await page.title();
+                statusCode = response ? response.status() : null;
+
+                if (response && response.ok()) {
+                  break;
+                }
+                connError = `HTTP ${statusCode}`;
+              } catch (e) {
+                connError = e.message || '无法访问';
+                if (i < retries - 1) {
+                  await new Promise(r => setTimeout(r, 2000));
+                }
+              }
+            }
+
+            await browser.close();
+
+            if (connError) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `❌ 友链验证失败：**${name}**\n\n**失败原因**：友链页面无法访问\n- 链接: ${cleanFriendUrl}\n- 实际访问: ${actualUrl}\n- 状态码: ${statusCode || '无'}\n- 错误: ${connError}\n\n请确认友链页面是否可以正常访问。`
+              });
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['needs-update']
+              });
+              return;
+            }
+
+            # --------------- 【原有逻辑不变：验证页面是否包含本站友链】---------------
+            console.log(`正在检查友链: ${cleanFriendUrl}`);
+
+            let hasFriendLink = false;
+
+            try {
+              const browser2 = await chromium.launch({ headless: true });
+              const context2 = await browser2.newContext({
+                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+              });
+              const page2 = await context2.newPage();
+              await page2.goto(cleanFriendUrl, { waitUntil: 'load', timeout: 12000 });
+              await page2.waitForTimeout(3000);
+
+              const content = await page2.content();
+              const allLinks = await page2.evaluate(() => {
+                return Array.from(document.querySelectorAll('a[href]')).map(a => a.href);
+              });
+
+              const linkText = allLinks.join('\n').toLowerCase();
+              const contentLower = content.toLowerCase();
+
+              hasFriendLink = contentLower.includes('fqzlr.com') || linkText.includes('fqzlr.com');
+
+              console.log(`页面标题: ${pageTitle}`);
+              console.log(`链接数量: ${allLinks.length}`);
+              console.log(`找到 fqzlr.com: ${hasFriendLink}`);
+
+              await browser2.close();
+            } catch (e) {
+              console.log(`检查友链时出错: ${e.message}`);
+            }
+
+            if (!hasFriendLink) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `❌ 友链验证失败：**${name}**\n\n**失败原因**：未在网站中找到本站友链\n- 网站: ${actualUrl}\n- 标题: ${pageTitle}\n\n请先在你的网站添加本站友链：\n- **名称**: fqzlr\n- **链接**: https://fqzlr.com\n- **头像**: https://q1.qlogo.cn/g?b=qq&nk=20447289&s=640\n- **描述**: 坐而言不如起而行.\n\n---\n💡 添加友链后，回复本评论即可重新检查。`
+              });
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['needs-update']
+              });
+              return;
+            }
+
+            # --------------- 【修改2：核心 - 读取TS配置文件（替代原JSON）】---------------
+            // 原逻辑：读取 friends.json → 新逻辑：读取 friendsConfig.ts 并解析出 friendsConfig 数组
+            const friendsConfigPath = 'src/config/friendsConfig.ts'; // 你的TS文件路径，确认是否正确！
+            let friendsConfigContent = fs.readFileSync(friendsConfigPath, 'utf-8');
+            
+            // 正则匹配 friendsConfig 数组的内容（TS语法）
+            const friendsConfigRegex = /export const friendsConfig: FriendLink\[\] = (\[(\s|\S)*?\]);/;
+            const match = friendsConfigContent.match(friendsConfigRegex);
+            if (!match) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '❌ 读取友链配置文件失败：未找到 friendsConfig 数组，请检查文件格式。'
+              });
+              return;
+            }
+            // 解析数组内容为JSON对象
+            let friends = JSON.parse(match[1]);
+
+            # --------------- 【修改3：字段映射（JSON → TS）】---------------
+            // 原字段：name/url/avatar/description/issue_id
+            // 新字段：title/siteurl/imgurl/desc/tags/weight/enabled/issue_id
+            const friendItem = {
+              title: name, // 原name → title
+              imgurl: cleanAvatar, // 原avatar → imgurl
+              desc: description || '', // 原description → desc
+              siteurl: cleanUrl, // 原url → siteurl
+              tags: ["Blog"], // 默认标签，可根据需求调整
+              weight: 10, // 默认权重，可根据需求调整
+              enabled: true, // 默认启用
+              issue_id: issue.number // 原issue_id 保留
+            };
+
+            # --------------- 【修改4：更新/新增友链项（逻辑不变，字段适配）】---------------
+            // 查找是否已存在该友链（按siteurl匹配，替代原url）
+            const existingIndex = friends.findIndex(f => f.siteurl.replace(/\/$/, '') === cleanUrl);
+            if (existingIndex !== -1) {
+              friends[existingIndex] = friendItem; // 覆盖原有项
+            } else {
+              friends.push(friendItem); // 新增项
+            }
+
+            # --------------- 【修改5：重新生成TS文件内容（替代原JSON写入）】---------------
+            // 把更新后的数组转回TS语法的字符串（格式化缩进）
+            const updatedFriendsConfig = JSON.stringify(friends, null, 2)
+              .replace(/"title"/g, 'title') // 移除JSON的引号，适配TS对象语法
+              .replace(/"imgurl"/g, 'imgurl')
+              .replace(/"desc"/g, 'desc')
+              .replace(/"siteurl"/g, 'siteurl')
+              .replace(/"tags"/g, 'tags')
+              .replace(/"weight"/g, 'weight')
+              .replace(/"enabled"/g, 'enabled')
+              .replace(/"issue_id"/g, 'issue_id');
+            
+            // 替换原文件中的 friendsConfig 数组内容
+            const newFriendsConfigContent = friendsConfigContent.replace(
+              friendsConfigRegex,
+              `export const friendsConfig: FriendLink[] = ${updatedFriendsConfig};`
+            );
+            // 写入TS文件
+            fs.writeFileSync(friendsConfigPath, newFriendsConfigContent, 'utf-8');
+
+            # --------------- 【原有逻辑不变：Git提交】---------------
+            const { execSync } = require('child_process');
+            execSync('git config user.name "github-actions[bot]"');
+            execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
+            execSync('git stash');
+            execSync('git pull origin main --rebase');
+            execSync('git stash pop');
+            execSync(`git add ${friendsConfigPath}`);
+            execSync(`git commit -m "🤝 更新友链: ${name}"`);
+            execSync('git push');
+
+            # --------------- 【修改6：通知评论字段适配（非核心，仅文案）】---------------
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `✅ 你的网站 **${name}** (${cleanUrl}) 已成功添加到 fqzlr 的友链中啦~\n\n**友链信息**：\n- 名称: ${name}\n- 链接: ${cleanUrl}\n- 描述: ${description || '无'}\n- 头像: ${cleanAvatar || '无'}`
+            });
+
+            // 移除验证中标签
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              name: '验证中'
+            });
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              state: 'completed'
+            });

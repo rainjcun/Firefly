@@ -244,6 +244,21 @@ function run(command, args, options = {}) {
   }
 }
 
+function formatFriendsConfig(repoRoot) {
+  const biomeBinary = path.join(
+    repoRoot,
+    "node_modules",
+    ".bin",
+    process.platform === "win32" ? "biome.cmd" : "biome"
+  );
+
+  if (!fs.existsSync(biomeBinary)) {
+    throw new Error("未找到 Biome 可执行文件，无法格式化 friendsConfig.ts。");
+  }
+
+  run(biomeBinary, ["format", "--write", FRIENDS_CONFIG_RELATIVE_PATH], { cwd: repoRoot });
+}
+
 async function validateFriendPage(pageUrl) {
   const browser = await chromium.launch({
     headless: true,
@@ -449,6 +464,7 @@ module.exports = async function processFriendRequest({ github, context }) {
 
     const repoRoot = process.env.GITHUB_WORKSPACE || process.cwd();
     const updateResult = updateFriendsConfig(repoRoot, formData, issueNumber);
+    formatFriendsConfig(repoRoot);
     const committed = commitAndPush(
       repoRoot,
       context.payload.repository?.default_branch || 'main',

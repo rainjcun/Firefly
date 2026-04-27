@@ -35,6 +35,8 @@ const isCommentEnabled =
 // 使用配置文件中的友链数据，按权重排序
 const items = getEnabledFriends();
 const allTags = [...new Set(items.flatMap((item) => item.tags || []))].sort();
+
+// 🔥 差异2：这里只加一行申请链接
 const friendApplyUrl =
 	"https://github.com/fqzlr/Firefly/issues/new?template=friend-request.yml";
 
@@ -51,6 +53,7 @@ const description =
     <div class="card-base z-10 px-9 py-6 relative w-full">
       <!-- 页面标题和描述 -->
       <div class="mb-4">
+        <!-- 🔥 差异1：只改这里的布局，加右侧申请按钮 -->
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <div class="flex items-center gap-3 mb-3">
@@ -72,6 +75,7 @@ const description =
             }
           </div>
 
+          <!-- 右侧：自助申请友链按钮 -->
           <div class="flex shrink-0 flex-col items-start gap-2 md:items-end">
             <a
               href={friendApplyUrl}

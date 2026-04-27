@@ -43,16 +43,6 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 0,
 	},
-	{
-		title: "cs",
-		imgurl: "https://api.dicebear.com/7.x/identicon/svg?seed=cs",
-		desc: "ccccccccccccccccccccccccccccccccccccccc",
-		siteurl: "https://fqzlr.com/",
-		tags: ["其他"],
-		weight: 5,
-		enabled: true,
-		issue_id: 16,
-	},
 ];
 
 // 获取启用的友链并进行排序

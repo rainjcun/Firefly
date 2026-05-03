@@ -63,6 +63,16 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 23,
 	},
+	{
+		title: "年华",
+		imgurl: "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
+		desc: "分享生活和记术。",
+		siteurl: "https://love-firefly.ccwu.cc/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 26,
+	},
 ];
 
 // 获取启用的友链并进行排序

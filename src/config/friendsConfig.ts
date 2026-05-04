@@ -73,6 +73,17 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 26,
 	},
+	{
+		title: "xf_blog",
+		imgurl:
+			"https://github.com/lm-xiao-fen/lm-xiao-fen.github.io/blob/main/image/MEITU_20260128_220225596.jpg?raw=true",
+		desc: "立志用 cloudflare workers，GitHub pages 和 vercel 做出整个互联网的up（虽然不会成功",
+		siteurl: "https://lm-xiao-fen.github.io/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 28,
+	},
 ];
 
 // 获取启用的友链并进行排序

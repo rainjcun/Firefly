@@ -42,6 +42,14 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
+			// 企鹅群链接
+	links.push({
+			name: "企鹅群",
+			url: "https://qm.qq.com/q/wrmF4FI9pu",
+			external: true,
+			icon: "simple-icons:qq",
+	});
+				
 	// 关于及其子菜单
 	links.push({
 		name: "关于",
@@ -63,6 +71,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		icon: "material-symbols:link",
 
 		// 子菜单
+		
 		children: [
 			{
 				name: "GitHub",

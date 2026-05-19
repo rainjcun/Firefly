@@ -84,6 +84,26 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 28,
 	},
+	{
+		title: "MmzMing",
+		imgurl: "https://i.stardots.io/784774835/StarDots-2026051117505284739.webp",
+		desc: "神人博客",
+		siteurl: "https://tblog.mmzhiku.xyz/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 40,
+	},
+	{
+		title: "年华",
+		imgurl: "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
+		desc: "分享生活和技术。",
+		siteurl: "https://blog.520781.xyz/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 26,
+	},
 ];
 
 // 获取启用的友链并进行排序

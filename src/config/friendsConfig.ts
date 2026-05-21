@@ -64,16 +64,6 @@ export const friendsConfig: FriendLink[] = [
 		issue_id: 23,
 	},
 	{
-		title: "年华",
-		imgurl: "https://q1.qlogo.cn/g?b=qq&nk=1323860289&s=640",
-		desc: "分享生活和记术。",
-		siteurl: "https://love-firefly.ccwu.cc/",
-		tags: ["Blog"],
-		weight: 10,
-		enabled: true,
-		issue_id: 26,
-	},
-	{
 		title: "xf_blog",
 		imgurl:
 			"https://github.com/lm-xiao-fen/lm-xiao-fen.github.io/blob/main/image/MEITU_20260128_220225596.jpg?raw=true",
@@ -239,6 +229,28 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 50,
 	},
+		{
+		title: "YFBLOG - 幻新至简",
+		imgurl: "https://cdn.yfblog.asia/image/favicon.ico",
+		desc: "随手笔记，技术心得分享.",
+		siteurl: "https://yfblog.asia/",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+		issue_id: 50,
+	},
+		{
+		title: "十三",
+		imgurl:
+			"https://img.nw177.cn/blog/100.assets/avatar.webp",
+		desc: "欲买桂花同载酒，终不似，少年游。",
+		siteurl: "https://firefly.nw177.cn",
+		tags: ["Blog"],
+		weight: 10, // 权重，数字越大排序越靠前
+		enabled: true, // 是否启用
+		issue_id: 50,
+	},
+	
 ];
 
 // 获取启用的友链并进行排序

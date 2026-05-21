@@ -213,6 +213,16 @@ export const friendsConfig: FriendLink[] = [
 	enabled: true,
 	issue_id: 0,
 },
+	{
+		title: "miuo's blog",
+		imgurl: "https://blog.miuo.me/avatar.avif",
+		desc: "记录文章、笔记、实验和暂时不想丢掉的内容。",
+		siteurl: "https://blog.miuo.me/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 49,
+	},
 ];
 
 // 获取启用的友链并进行排序

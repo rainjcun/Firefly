@@ -147,12 +147,16 @@ function extractTags(block) {
 }
 
 function parseFriendsConfig(content) {
-  const listMatch = content.match(/export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\n\];/);
+  const listMatch = content.match(/export const friendsConfig: FriendLink\[\] = \[([\s\S]*?)\];/);
   if (!listMatch) {
     throw new Error('未找到 friendsConfig 数组，请检查 src/config/friendsConfig.ts 的格式。');
   }
 
-  const friendBlocks = [...listMatch[1].matchAll(/\{([\s\S]*?)\n\t\},?/g)].map((item) => item[1]);
+  const friendBlocks = [...listMatch[1].matchAll(/\{([\s\S]*?)\}(?=\s*,|\s*$)/g)].map((item) => item[1]);
+  if (!friendBlocks.length) {
+    throw new Error('未解析到任何 friendsConfig 条目，请检查 src/config/friendsConfig.ts 的格式。');
+  }
+
   return friendBlocks.map((block) => ({
     title: extractString(block, 'title'),
     imgurl: extractString(block, 'imgurl'),

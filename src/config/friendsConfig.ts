@@ -190,7 +190,7 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "MmzMing的知识库",
-		imgurl: "https://i.stardots.io/784774835/StarDots-2026051117505284739.webp",
+		imgurl: "https://i.stardots.io/784774835/StarDots-2026052116374135506.jpg",
 		desc: "哈基米，南北绿豆",
 		siteurl: "https://tblog.mmzhiku.xyz",
 		tags: ["Blog"],
@@ -232,7 +232,7 @@ export const friendsConfig: FriendLink[] = [
 		title: "十三",
 		imgurl: "https://img.nw177.cn/blog/100.assets/avatar.webp",
 		desc: "欲买桂花同载酒，终不似，少年游。",
-		siteurl: "https://firefly.nw177.cn",
+		siteurl: "https://blog.nw177.cn/",
 		tags: ["Blog"],
 		weight: 10, // 权重，数字越大排序越靠前
 		enabled: true, // 是否启用
@@ -249,18 +249,8 @@ export const friendsConfig: FriendLink[] = [
 		issue_id: 50,
 	},
 	{
-		title: "我的小破站",
-		imgurl: "https://blog.catj1.qzz.io/medias/cat.jpeg",
-		desc: "记录技术笔记的小站",
-		siteurl: "https://blog.catj1.qzz.io/",
-		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
-		issue_id: 50,
-	},
-	{
 		title: "Sigrika-善良耙耙柑🍊",
-		imgurl: "https://avatars.githubusercontent.com/u/172878250",
+		imgurl: "https://weavatar.com/avatar/bc0dba25ea5949e8290d012e081ceec669aa7784c7ad765173473c80cbaee404:tv_%E5%A4%A7%E5%93%AD",
 		desc: "记录我的二次元之旅",
 		siteurl: "https://qwq.sigrika.cc/",
 		tags: ["Blog"],

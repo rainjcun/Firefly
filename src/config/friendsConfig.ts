@@ -250,7 +250,8 @@ export const friendsConfig: FriendLink[] = [
 	},
 	{
 		title: "Sigrika-善良耙耙柑🍊",
-		imgurl: "https://weavatar.com/avatar/bc0dba25ea5949e8290d012e081ceec669aa7784c7ad765173473c80cbaee404:tv_%E5%A4%A7%E5%93%AD",
+		imgurl:
+			"https://weavatar.com/avatar/bc0dba25ea5949e8290d012e081ceec669aa7784c7ad765173473c80cbaee404:tv_%E5%A4%A7%E5%93%AD",
 		desc: "记录我的二次元之旅",
 		siteurl: "https://qwq.sigrika.cc/",
 		tags: ["Blog"],
@@ -258,9 +259,10 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true, // 是否启用
 		issue_id: 50,
 	},
-		{
+	{
 		title: "L!!!!ght",
-		imgurl: "https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
+		imgurl:
+			"https://easyimg.kejk.cn/i/4484873c-c2cc-4b3d-bc35-5c72ed01cfd9.webp",
 		desc: "阳光正好，慢慢前行。",
 		siteurl: "https://sunlight.kejk.cn/",
 		tags: ["Blog"],

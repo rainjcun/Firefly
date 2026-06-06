@@ -96,7 +96,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://home.fqzlr.com",
 				external: true,
 				icon: "fa7-solid:house-chimney",
-		    },
+			},
 			{
 				name: "fqzlrの图床",
 				url: "https://tu.fqzlr.com",

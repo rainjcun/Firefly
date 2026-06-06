@@ -1,43 +1,43 @@
 import type { SponsorConfig } from "../types/config";
 
 export const sponsorConfig: SponsorConfig = {
-  title: "",
-  description: "",
-  usage: "",
-  methods: [
-    {
-      name: "Ö§¸¶±¦",
-      icon: "fa7-brands:alipay",
-      qrCode: "/assets/images/sponsor/alipay.png",
-      link: "",
-      description: "Ê¹ÓÃ Ö§¸¶±¦ É¨ÂëÔŞÖú",
-      enabled: true,
-    },
-    {
-      name: "Î¢ĞÅ",
-      icon: "fa7-brands:weixin",
-      qrCode: "/assets/images/sponsor/wechat.png",
-      link: "",
-      description: "Ê¹ÓÃ Î¢ĞÅ É¨ÂëÔŞÖú",
-      enabled: true,
-    },
-    {
-      name: "°®·¢µç",
-      icon: "simple-icons:afdian",
-      qrCode: "",
-      link: "https://ifdian.net/a/fqzlr",
-      description: "Í¨¹ı °®·¢µç ½øĞĞÔŞÖú",
-      enabled: true,
-    },
-  ],
-  sponsors: [
-    {
-      name: "214556787",
-      amount: "£¤1",
-      date: "2025-10-01",
-    },
-  ],
-  showSponsorsList: true,
-  showComment: true,
-  showButtonInPost: true,
+	title: "",
+	description: "",
+	usage: "",
+	methods: [
+		{
+			name: "æ”¯ä»˜å®",
+			icon: "fa7-brands:alipay",
+			qrCode: "/assets/images/sponsor/alipay.png",
+			link: "",
+			description: "ä½¿ç”¨ æ”¯ä»˜å® æ‰«ç èµåŠ©",
+			enabled: true,
+		},
+		{
+			name: "å¾®ä¿¡",
+			icon: "fa7-brands:weixin",
+			qrCode: "/assets/images/sponsor/wechat.png",
+			link: "",
+			description: "ä½¿ç”¨ å¾®ä¿¡ æ‰«ç èµåŠ©",
+			enabled: true,
+		},
+		{
+			name: "çˆ±å‘ç”µ",
+			icon: "simple-icons:afdian",
+			qrCode: "",
+			link: "https://ifdian.net/a/fqzlr",
+			description: "é€šè¿‡ çˆ±å‘ç”µ è¿›è¡ŒèµåŠ©",
+			enabled: true,
+		},
+	],
+	sponsors: [
+		{
+			name: "214556787",
+			amount: "ï¿¥1",
+			date: "2025-10-01",
+		},
+	],
+	showSponsorsList: true,
+	showComment: true,
+	showButtonInPost: true,
 };

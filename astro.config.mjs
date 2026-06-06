@@ -66,9 +66,7 @@ export default defineConfig({
 	image: {
 		// 全局响应式布局
 		layout: "constrained",
-		// 临时禁用内部生成的图像优化，以避免在 Workers 构建中产生 ENOENT
-		service: undefined,
-		endpoint: undefined,
+		// 恢复内部图像服务（若需要自定义，请在此处配置 `service` 与 `endpoint`）
 		dangerouslyProcessSVG: false,
 	},
 
@@ -301,6 +299,9 @@ export default defineConfig({
 			cssCodeSplit: true,
 			cssMinify: "esbuild",
 			assetsInlineLimit: 4096,
+			// Ensure client assets are emitted into dist/client/_astro
+			outDir: "dist/client",
+			assetsDir: "_astro",
 		},
 	},
 });

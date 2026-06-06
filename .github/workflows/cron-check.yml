@@ -1,5 +1,8 @@
 name: 🔍 友链每日巡检
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   schedule:
     - cron: '0 8 * * *'
@@ -18,7 +21,7 @@ jobs:
       - name: 安装 Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: 安装 Playwright
         run: |

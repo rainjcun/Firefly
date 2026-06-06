@@ -66,6 +66,10 @@ export default defineConfig({
 	image: {
 		// 全局响应式布局
 		layout: "constrained",
+		// 临时禁用内部生成的图像优化，以避免在 Workers 构建中产生 ENOENT
+		service: undefined,
+		endpoint: undefined,
+		dangerouslyProcessSVG: false,
 	},
 
 	experimental: {

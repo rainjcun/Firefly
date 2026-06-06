@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "node scripts/generate-icons.js && npx tsx scripts/generate-lqips.ts && astro build && pagefind --site dist",
+    "build": "node scripts/generate-icons.js && pnpm exec tsx scripts/generate-lqips.ts && astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
     "type-check": "tsc --noEmit --isolatedDeclarations",
@@ -15,7 +15,7 @@
     "lint": "biome check --write ./src",
     "preinstall": "npx only-allow pnpm",
     "icons": "node scripts/generate-icons.js",
-    "lqips": "npx tsx scripts/generate-lqips.ts"
+    "lqips": "pnpm exec tsx scripts/generate-lqips.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -87,7 +87,8 @@
     "playwright": "^1.59.1",
     "postcss-import": "^16.1.1",
     "postcss-nesting": "^13.0.2",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "tsx": "^4.22.4"
   },
   "packageManager": "pnpm@9.14.4"
 }

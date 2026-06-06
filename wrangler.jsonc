@@ -1,6 +1,11 @@
 {
 	"name": "firefly",
+<<<<<<< HEAD
 	"compatibility_date": "2026-04-12", // 更新为你部署当天的日期
+=======
+	"compatibility_date": "2025-01-01",
+	"compatibility_flags": ["nodejs_compat"],
+>>>>>>> upstream/master
 	"assets": {
 		"directory": "./dist"
 	}

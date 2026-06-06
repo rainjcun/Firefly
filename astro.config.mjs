@@ -59,7 +59,8 @@ export default defineConfig({
 	adapter,
 
 	build: {
-		assets: "client/_astro",
+		// assets path aligned to actual emitted client assets (double 'client' observed)
+		assets: "client/client/_astro",
 	},
 
 	// 图像优化配置

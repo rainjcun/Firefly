@@ -3,7 +3,7 @@ title: "Git 使用教程"
 published: 2026-04-28
 updated: 2026-04-28
 description: git 使用教程及常用命令，自用
-image: ./cover.jpg
+image: /src/assets/images/cover.avif
 tags: [Git]
 category: Git
 draft: false

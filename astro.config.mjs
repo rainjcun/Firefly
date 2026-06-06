@@ -58,6 +58,10 @@ export default defineConfig({
 
 	adapter,
 
+	build: {
+		assets: "client/_astro",
+	},
+
 	// 图像优化配置
 	image: {
 		// 全局响应式布局

@@ -224,8 +224,8 @@ export const friendsConfig: FriendLink[] = [
 		desc: "随手笔记，技术心得分享.",
 		siteurl: "https://yfblog.asia/",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
+		weight: 10,
+		enabled: true,
 		issue_id: 50,
 	},
 	{
@@ -234,8 +234,8 @@ export const friendsConfig: FriendLink[] = [
 		desc: "欲买桂花同载酒，终不似，少年游。",
 		siteurl: "https://blog.nw177.cn/",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
+		weight: 10,
+		enabled: true,
 		issue_id: 50,
 	},
 	{
@@ -244,8 +244,8 @@ export const friendsConfig: FriendLink[] = [
 		desc: "Go with the flow.",
 		siteurl: "https://iwexe.top",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
+		weight: 10,
+		enabled: true,
 		issue_id: 50,
 	},
 	{
@@ -255,8 +255,8 @@ export const friendsConfig: FriendLink[] = [
 		desc: "记录我的二次元之旅",
 		siteurl: "https://qwq.sigrika.cc/",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
+		weight: 10,
+		enabled: true,
 		issue_id: 50,
 	},
 	{
@@ -266,9 +266,20 @@ export const friendsConfig: FriendLink[] = [
 		desc: "阳光正好，慢慢前行。",
 		siteurl: "https://sunlight.kejk.cn/",
 		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
+		weight: 10,
+		enabled: true,
 		issue_id: 50,
+	},
+	{
+		title: "拾光の博客",
+		imgurl:
+			"https://weavatar.com/api/avatar/ff2a232e034fb7677c9f211c5979619f3f4818302ae2cf2a11ea74af530e7758?s=50&t=1780753762637",
+		desc: "拾取散落的时光碎片",
+		siteurl: "https://mistfly.xyz/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 55,
 	},
 ];
 

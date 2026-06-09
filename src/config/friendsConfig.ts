@@ -281,6 +281,16 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 55,
 	},
+	{
+		title: "冰汐梦",
+		imgurl: "https://tu.irier0023.xyz/file/1780921907488_avatar.avif",
+		desc: "当所有剑都归鞘时，真正的较量才刚刚开始——那是人心与天地的对弈。",
+		siteurl: "https://blog.irier0023.xyz/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 57,
+	},
 ];
 
 // 获取启用的友链并进行排序

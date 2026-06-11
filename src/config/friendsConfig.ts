@@ -302,6 +302,16 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 		issue_id: 58,
 	},
+	{
+		title: "风起",
+		imgurl: "https://blog.windstart.top/_astro/xiao.DZR3cwiW_1XI6Uv.webp",
+		desc: "无善无恶心之体，有善有恶意之动",
+		siteurl: "https://blog.windstart.top/",
+		tags: ["Blog"],
+		weight: 10,
+		enabled: true,
+		issue_id: 60,
+	},
 ];
 
 // 获取启用的友链并进行排序

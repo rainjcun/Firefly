@@ -7,13 +7,13 @@ const SITE_LANG = "zh_CN";
 
 export const siteConfig: SiteConfig = {
 	// 站点标题
-	title: "Fqzlr",
+	title: "呼哈",
 
 	// 站点副标题
 	subtitle: "fqzlrの博客",
 
 	// 站点 URL
-	site_url: "https://fqzlr.com/",
+	site_url: "https://129282.xyz/",
 
 	// 站点描述
 	description:
@@ -140,7 +140,7 @@ export const siteConfig: SiteConfig = {
 		// 友链页面开关
 		friends: true,
 		// 赞助页面开关
-		sponsor: true,
+		sponsor: false,
 		// 留言板页面开关，需要配置评论系统
 		guestbook: true,
 		// 番组计划页面开关，含追番、游戏、书籍和音乐

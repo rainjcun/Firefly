@@ -66,7 +66,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
       {
         name: "咏春",
         artist: "七朵组合",
-        url: "/assets/music/七朵组合 - 咏春.flac",
+        url: "/assets/music/七朵组合 - 咏春.mp3",
         cover: "/assets/music/cover/109951169585655912.webp",
         lrc: "/assets/music/lrc/咏春-七朵组合-歌词.lrc",
       },

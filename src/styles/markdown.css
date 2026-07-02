@@ -150,15 +150,22 @@
 
   img {
     max-width: 100%;
+    width: 100%;
     height: auto;
     display: block;
+    box-sizing: border-box;
   }
 
   figure {
     margin: 1rem 0;
+    width: 100%;
+    max-width: 100%;
     
     img {
       border-radius: 0.75rem;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
     }
     
     figcaption {
@@ -169,20 +176,28 @@
   @media (max-width: 768px) {
     img {
       border-radius: 0.5rem;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
     }
     
     figure {
       margin: 0.75rem 0;
+      width: 100%;
     }
   }
 
   @media (max-width: 480px) {
     img {
       border-radius: 0.375rem;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
     }
     
     figure {
       margin: 0.5rem 0;
+      width: 100%;
     }
   }
 }

@@ -47,6 +47,356 @@
 /* 确保平滑滚动 */
 html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* iOS Safari 底部安全区域适配 */
+.ios-bottom-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* iOS Safari 顶部安全区域适配 */
+.ios-top-safe {
+    padding-top: env(safe-area-inset-top);
+}
+
+/* iOS Safari 滚动容器优化 */
+.ios-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+}
+
+/* Android Chrome 滚动优化 */
+.android-scroll {
+    overscroll-behavior-y: contain;
+    overscroll-behavior-x: none;
+}
+
+/* 禁用点击高亮 */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 图片选择禁用 */
+img {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+/* ============================================
+ * iOS Safari 专属优化
+ * ============================================ */
+@media not all and (min-resolution: 0.001dpcm) {
+    @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+        /* iOS Safari 10+ 隐藏滚动条但保持滚动功能 */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+            background: transparent !important;
+        }
+        
+        /* iOS Safari 按钮点击优化 */
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        
+        /* iOS Safari 表单元素优化 */
+        input,
+        textarea,
+        select {
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 0;
+        }
+        
+        /* iOS Safari 渐变背景渲染优化 */
+        .gradient-optimized {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+    }
+}
+
+/* ============================================
+ * Android Chrome 专属优化
+ * ============================================ */
+@media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+    /* Android Chrome 滚动条样式 */
+    .hide-scrollbar::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+    }
+    
+    /* Android Chrome 文本渲染优化 */
+    body {
+        text-rendering: optimizeLegibility;
+        -webkit-font-feature-settings: "liga" on;
+        font-feature-settings: "liga" on;
+    }
+}
+
+/* ============================================
+ * 移动端通用优化 (max-width: 1023px)
+ * ============================================ */
+@media (max-width: 1023px) {
+    /* 禁用双击缩放 */
+    html, body {
+        touch-action: pan-x pan-y pinch-zoom;
+    }
+    
+    /* 优化点击区域 */
+    a, button, [role="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* 移动端图片容器优化 */
+    .responsive-image-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        overflow: hidden;
+    }
+    
+    /* 移动端图片自适应 */
+    .responsive-image-container img {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        object-fit: cover !important;
+    }
+    
+    /* 防止图片溢出容器 */
+    img {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* 修复移动端 iframe 自适应 */
+    iframe {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    
+    /* 优化移动端输入框 */
+    input, textarea {
+        font-size: 16px !important;
+    }
+    
+    /* 禁用移动端长按选中文本 */
+    .no-select {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+}
+
+/* ============================================
+ * 大屏手机优化 (540px - 767px) - iPhone 12/13/14/15, 主流安卓旗舰
+ * ============================================ */
+@media (min-width: 540px) and (max-width: 767px) {
+    /* 文章列表容器 */
+    .post-list-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* 网格模式 */
+    .post-list-container.grid-mode {
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)) !important;
+        gap: 1rem !important;
+    }
+    
+    /* 列表模式封面 */
+    :global(.list-mode) .has-cover .post-card-image {
+        width: 9rem !important;
+    }
+    
+    /* 标题字体 */
+    .post-card-title {
+        font-size: 1.25rem !important;
+        line-height: 1.625rem !important;
+    }
+}
+
+/* ============================================
+ * 小屏手机优化 (360px - 539px) - 旧款手机、低端安卓
+ * ============================================ */
+@media (min-width: 360px) and (max-width: 539px) {
+    /* 文章列表容器 */
+    .post-list-container {
+        padding-left: 0.625rem !important;
+        padding-right: 0.625rem !important;
+    }
+    
+    /* 网格模式单列 */
+    .post-list-container.grid-mode {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+    
+    /* 列表模式封面 */
+    :global(.list-mode) .has-cover .post-card-image {
+        width: 7.5rem !important;
+    }
+    
+    :global(.list-mode) .has-cover .post-card-content {
+        width: calc(100% - 7.5rem - 0.625rem) !important;
+    }
+    
+    /* 标题字体 */
+    .post-card-title {
+        font-size: 1.125rem !important;
+        line-height: 1.5rem !important;
+    }
+    
+    /* 描述文本 */
+    .description {
+        font-size: 0.8125rem !important;
+    }
+}
+
+/* ============================================
+ * 极小屏手机优化 (max-width: 359px) - 旧款入门手机
+ * ============================================ */
+@media (max-width: 359px) {
+    /* 文章列表容器 */
+    .post-list-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    /* 网格模式单列紧凑 */
+    .post-list-container.grid-mode {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+    }
+    
+    /* 列表模式封面最小化 */
+    :global(.list-mode) .has-cover .post-card-image {
+        width: 6rem !important;
+    }
+    
+    :global(.list-mode) .has-cover .post-card-content {
+        width: calc(100% - 6rem - 0.5rem) !important;
+        padding: 0.5rem !important;
+    }
+    
+    /* 标题字体最小化 */
+    .post-card-title {
+        font-size: 1rem !important;
+        line-height: 1.375rem !important;
+    }
+    
+    /* 描述文本最小化 */
+    .description {
+        font-size: 0.75rem !important;
+    }
+    
+    /* 标签隐藏 */
+    .stats {
+        display: none !important;
+    }
+    
+    /* 元数据缩小 */
+    .post-meta {
+        transform: scale(0.7) !important;
+        transform-origin: top left !important;
+    }
+}
+
+/* ============================================
+ * 大屏手机横屏优化 (540px - 1023px, landscape)
+ * ============================================ */
+@media (min-width: 540px) and (max-width: 1023px) and (orientation: landscape) {
+    /* 文章列表容器 */
+    .post-list-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* 网格模式两列 */
+    .post-list-container.grid-mode {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    /* 列表模式封面 */
+    :global(.list-mode) .has-cover .post-card-image {
+        width: 10rem !important;
+    }
+    
+    /* 标题字体 */
+    .post-card-title {
+        font-size: 1.375rem !important;
+        line-height: 1.75rem !important;
+    }
+}
+
+/* ============================================
+ * 平板设备优化 (768px - 1023px)
+ * ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+    /* 文章列表容器 */
+    .post-list-container {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    
+    /* 网格模式两列 */
+    .post-list-container.grid-mode {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.25rem !important;
+    }
+    
+    /* 列表模式封面 */
+    :global(.list-mode) .has-cover .post-card-image {
+        width: 11rem !important;
+    }
+    
+    /* 标题字体 */
+    .post-card-title {
+        font-size: 1.5rem !important;
+        line-height: 2rem !important;
+    }
+    
+    /* 网格模式封面比例 */
+    :global(.grid-mode) .post-card-image {
+        aspect-ratio: 16/10 !important;
+    }
 }
 
 /* 页面顶部渐变高光效果 */

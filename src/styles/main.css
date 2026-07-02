@@ -576,3 +576,278 @@ html {
 .pagination-info {
   @apply text-sm text-(--text-secondary) text-center mb-2;
 }
+
+/* ============================================
+ * 移动端响应式优化 (max-width: 767px)
+ * ============================================ */
+@media (max-width: 767px) {
+  /* 文章列表容器优化 */
+  .post-list-container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* 网格模式下的卡片间距调整 */
+  .post-list-container.grid-mode {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* 列表模式下的卡片优化 */
+  .post-list-container.list-mode {
+    gap: 0.75rem !important;
+  }
+
+  /* 文章卡片标题字体缩小 */
+  .post-card-title {
+    font-size: 1.25rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  /* 网格模式下的标题进一步优化 */
+  .post-list-container.grid-mode .post-card-item a[href] {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+    max-height: 2.8em !important;
+  }
+
+  /* 描述文本行数限制 */
+  .post-list-container.grid-mode .post-card-item .description {
+    font-size: 0.8125rem !important;
+    line-clamp: 2 !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  /* 标签按钮缩小 */
+  .post-list-container.grid-mode .post-card-item .stats a {
+    font-size: 0.625rem !important;
+    padding: 0.125rem 0.375rem !important;
+    height: 1.125rem !important;
+  }
+
+  /* 元数据图标缩小 */
+  .post-list-container.grid-mode .post-card-item .meta-icon {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+
+  /* 卡片内边距调整 */
+  .post-list-container.grid-mode .post-card-item > div {
+    padding: 0.75rem !important;
+  }
+
+  /* PostCard 组件的移动端优化 */
+  :global(.list-mode) .post-card-wrapper {
+    flex-direction: row !important;
+  }
+
+  :global(.list-mode) .has-cover .post-card-content {
+    width: calc(100% - 7rem - 0.75rem) !important;
+    padding: 0.625rem 0.5rem 0.625rem 0.625rem !important;
+  }
+
+  :global(.list-mode) .has-cover .post-card-image {
+    width: 7rem !important;
+  }
+
+  :global(.list-mode) .post-card-title {
+    font-size: 1rem !important;
+    line-height: 1.375rem !important;
+  }
+
+  /* 网格模式下封面图片比例调整 */
+  :global(.grid-mode) .post-card-image {
+    aspect-ratio: 16/9 !important;
+  }
+
+  :global(.grid-mode) .post-card-title {
+    font-size: 1.125rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  :global(.grid-mode) .post-card-content {
+    padding: 0.75rem !important;
+  }
+
+  /* 页面顶部渐变高光高度调整 */
+  .top-gradient-highlight {
+    height: 120px !important;
+  }
+
+  /* 导航栏下主内容区域调整 */
+  body.enable-banner .absolute.w-full.z-30:not(.no-banner-layout):not(.mobile-main-no-banner) {
+    top: calc(var(--banner-height) - 3rem) !important;
+  }
+
+  /* 下拉菜单和浮动面板圆角调整 */
+  .dropdown-content,
+  .float-panel {
+    border-radius: 1rem !important;
+  }
+
+  /* 按钮尺寸优化 */
+  .btn-regular {
+    min-height: 2.25rem !important;
+  }
+
+  /* 代码块横向滚动优化 */
+  .custom-md pre {
+    border-radius: 0.75rem !important;
+  }
+
+  /* 表格容器优化 */
+  .custom-md .horizontal-scroll-container {
+    border-radius: 0.75rem !important;
+  }
+
+  /* TOC 目录在移动端隐藏（已有样式，确保一致性） */
+  .widget-container[data-widget-type="toc"] {
+    display: none !important;
+  }
+}
+
+/* ============================================
+ * 小屏手机优化 (max-width: 480px)
+ * ============================================ */
+@media (max-width: 480px) {
+  /* 文章列表容器进一步缩小边距 */
+  .post-list-container {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+
+  /* 网格模式单列显示 */
+  .post-list-container.grid-mode {
+    grid-template-columns: 1fr !important;
+    gap: 0.625rem !important;
+  }
+
+  /* 列表模式封面进一步缩小 */
+  :global(.list-mode) .has-cover .post-card-image {
+    width: 6rem !important;
+  }
+
+  :global(.list-mode) .has-cover .post-card-content {
+    width: calc(100% - 6rem - 0.625rem) !important;
+  }
+
+  /* 标题字体进一步缩小 */
+  .post-card-title {
+    font-size: 1.0625rem !important;
+    line-height: 1.375rem !important;
+  }
+
+  /* 描述文本字体缩小 */
+  .description {
+    font-size: 0.8125rem !important;
+  }
+
+  /* 标签隐藏或极小显示 */
+  .post-list-container.list-mode .stats {
+    display: none !important;
+  }
+
+  /* 网格模式标签超小显示 */
+  .post-list-container.grid-mode .post-card-item .stats a {
+    font-size: 0.5625rem !important;
+    padding: 0.0625rem 0.25rem !important;
+  }
+
+  /* 元数据进一步缩小 */
+  .post-meta {
+    transform: scale(0.65) !important;
+    transform-origin: top left !important;
+    margin-bottom: 0.125rem !important;
+  }
+
+  /* 卡片内边距最小化 */
+  .post-list-container.grid-mode .post-card-item > div {
+    padding: 0.5rem !important;
+  }
+
+  /* 进入按钮缩小 */
+  .post-card-enter-btn {
+    width: 2.5rem !important;
+  }
+
+  /* 代码块字体缩小 */
+  .custom-md code {
+    font-size: 0.75rem !important;
+    padding: 0.125rem 0.375rem !important;
+  }
+
+  /* 引用块优化 */
+  .custom-md blockquote {
+    padding-left: 0.75rem !important;
+  }
+
+  .custom-md blockquote::before {
+    width: 0.1875rem !important;
+    left: -0.0625rem !important;
+  }
+}
+
+/* ============================================
+ * 平板设备优化 (768px - 1023px)
+ * ============================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* 文章列表容器 */
+  .post-list-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* 网格模式两列显示 */
+  .post-list-container.grid-mode {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* 列表模式封面适中大小 */
+  :global(.list-mode) .has-cover .post-card-image {
+    width: 8rem !important;
+  }
+
+  :global(.list-mode) .has-cover .post-card-content {
+    width: calc(100% - 8rem - 1rem) !important;
+  }
+
+  /* 标题字体适中 */
+  .post-card-title {
+    font-size: 1.375rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  /* 网格模式标题 */
+  .post-list-container.grid-mode .post-card-item a[href] {
+    font-size: 1.125rem !important;
+  }
+
+  /* 描述文本 */
+  .post-list-container.grid-mode .post-card-item .description {
+    font-size: 0.875rem !important;
+  }
+
+  /* 标签按钮 */
+  .post-list-container.grid-mode .post-card-item .stats a {
+    font-size: 0.6875rem !important;
+  }
+
+  /* 卡片内边距 */
+  .post-list-container.grid-mode .post-card-item > div {
+    padding: 1rem !important;
+  }
+
+  /* 网格模式封面比例 */
+  :global(.grid-mode) .post-card-image {
+    aspect-ratio: 3/2 !important;
+  }
+
+  :global(.grid-mode) .post-card-title {
+    font-size: 1.25rem !important;
+  }
+
+  :global(.grid-mode) .post-card-content {
+    padding: 0.875rem !important;
+  }
+}

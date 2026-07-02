@@ -138,7 +138,6 @@
         
         img {
           @apply object-cover w-full grow rounded-xl m-0;
-          /* 使图片自动填满所在网格高度（自适应裁剪居中，不拉伸变形） */
           height: 100%;
         }
         
@@ -146,6 +145,44 @@
           @apply mt-2 mb-0;
         }
       }
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  figure {
+    margin: 1rem 0;
+    
+    img {
+      border-radius: 0.75rem;
+    }
+    
+    figcaption {
+      @apply text-sm text-(--text-color-secondary) mt-2 text-center;
+    }
+  }
+
+  @media (max-width: 768px) {
+    img {
+      border-radius: 0.5rem;
+    }
+    
+    figure {
+      margin: 0.75rem 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    img {
+      border-radius: 0.375rem;
+    }
+    
+    figure {
+      margin: 0.5rem 0;
     }
   }
 }

@@ -1,5 +1,6 @@
 
 export default new Map([
 ["src/content/posts/mdx-example.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fposts%2Fmdx-example.mdx&astroContentModuleFlag=true")],
+["src/content/posts/republish/FQ/mdx-example.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fposts%2Frepublish%2FFQ%2Fmdx-example.mdx&astroContentModuleFlag=true")],
 ["src/content/spec/friends.mdx", () => import("astro:content-layer-deferred-module?astro%3Acontent-layer-deferred-module=&fileName=src%2Fcontent%2Fspec%2Ffriends.mdx&astroContentModuleFlag=true")]]);
 		

@@ -88,3 +88,8 @@ Thumbs.db
 *.tar.lz4
 *.tar.zst
 ```
+# Obsidian
+.obsidian/
+# 评估文档
+?? 项目现状评估.md
+

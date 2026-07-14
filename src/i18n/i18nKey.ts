@@ -320,6 +320,18 @@ enum I18nKey {
 	passwordSubmit = "passwordSubmit",
 	passwordError = "passwordError",
 	passwordProtectedRss = "passwordProtectedRss",
+
+	// 转载页面
+	republish = "republish",
+	republishTitle = "republishTitle",
+	republishDescription = "republishDescription",
+	republishLinkInput = "republishLinkInput",
+	republishLinkPlaceholder = "republishLinkPlaceholder",
+	republishSubmit = "republishSubmit",
+	republishOriginalLink = "republishOriginalLink",
+	republishAuthor = "republishAuthor",
+	republishAllPosts = "republishAllPosts",
+	republishNoPosts = "republishNoPosts",
 }
 
 export default I18nKey;

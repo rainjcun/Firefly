@@ -334,4 +334,16 @@ export const en: Translation = {
 	[Key.passwordError]: "Incorrect password, please try again.",
 	[Key.passwordProtectedRss]:
 		"This article is encrypted. Please visit the website to view it.",
+
+	// Republish Page
+	[Key.republish]: "Republish",
+	[Key.republishTitle]: "Republish Articles",
+	[Key.republishDescription]: "Quickly republish excellent articles to your blog",
+	[Key.republishLinkInput]: "Article Link",
+	[Key.republishLinkPlaceholder]: "Enter the article link to republish...",
+	[Key.republishSubmit]: "Start Republish",
+	[Key.republishOriginalLink]: "Original Link",
+	[Key.republishAuthor]: "Original Author",
+	[Key.republishAllPosts]: "All Republished Posts",
+	[Key.republishNoPosts]: "No republished posts yet",
 };

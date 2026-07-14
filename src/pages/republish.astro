@@ -1,0 +1,301 @@
+---
+// ============================================
+// 转载文章页面
+// ============================================
+// 页面路径: /republish/
+// 功能:
+//   1. 输入文章链接，一键转载到本地博客
+//   2. 显示所有已转载的文章列表
+// ============================================
+
+// 导入依赖模块
+import { Icon } from "astro-icon/components";           // 图标组件
+import I18nKey from "@i18n/i18nKey";                    // 多语言键名
+import { i18n } from "@i18n/translation";                // 多语言翻译函数
+import MainGridLayout from "@layouts/MainGridLayout.astro"; // 主布局组件
+import { getSortedPostsList } from "@/utils/content-utils";  // 获取文章列表工具函数
+import { url } from "@/utils/url-utils";                     // URL 生成工具函数
+
+// 获取所有文章，并筛选出带"转载"或"repost"标签的文章
+const allPosts = await getSortedPostsList();
+const republishPosts = allPosts.filter(post => 
+  post.data.tags && post.data.tags.some(tag => tag === "转载" || tag === "repost")
+);
+---
+
+<!-- 页面主体，使用主布局 -->
+<MainGridLayout title={i18n(I18nKey.republishTitle)}>
+  <div class="max-w-2xl mx-auto">
+    <!-- 转载工具卡片 -->
+    <div class="card card-hover scale-animation mb-8">
+      <div class="p-6">
+        <!-- 标题区域 -->
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <Icon name="material-symbols:link" is:inline class="text-(--primary)" />
+          {i18n(I18nKey.republishLinkInput)}
+        </h2>
+        <p class="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+          {i18n(I18nKey.republishDescription)}
+        </p>
+        
+        <!-- 输入框和按钮 -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            type="url"
+            id="republish-url"
+            placeholder={i18n(I18nKey.republishLinkPlaceholder)}
+            class="flex-1 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-(--primary) focus:border-transparent transition"
+          />
+          <button
+            id="republish-btn"
+            class="px-6 py-3 bg-(--primary) hover:bg-(--primary-dark) text-white font-medium rounded-lg transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Icon name="material-symbols:download" is:inline />
+            {i18n(I18nKey.republishSubmit)}
+          </button>
+        </div>
+        
+        <!-- 进度条容器 (默认隐藏) -->
+        <div id="progress-container" class="mt-6 hidden">
+          <div class="flex items-center gap-3 mb-2">
+            <div id="progress-icon" class="w-5 h-5 flex items-center justify-center">
+              <Icon name="svg-spinners:ring-resize" is:inline class="text-blue-500" />
+            </div>
+            <span id="progress-text" class="text-sm text-gray-600 dark:text-gray-400">处理中...</span>
+          </div>
+          <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <!-- 进度条，JavaScript 动态修改 width 属性 -->
+            <div id="progress-bar" class="h-full bg-(--primary) transition-all duration-300 ease-out" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <!-- 成功提示容器 (默认隐藏) -->
+        <div id="success-container" class="mt-6 hidden">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <Icon name="material-symbols:check" is:inline class="text-green-600 dark:text-green-400" />
+            </div>
+            <span class="font-semibold text-green-600 dark:text-green-400">转载完成！</span>
+          </div>
+          <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <!-- 成功消息，由 JavaScript 动态填充文章标题 -->
+            <p id="success-message" class="text-sm text-green-700 dark:text-green-300 mb-3">
+              文章已自动生成，页面将在 2 秒后刷新...
+            </p>
+            <p class="text-xs text-green-600 dark:text-green-400">
+              文件已保存到: <code class="bg-green-200 dark:bg-green-800 px-1 rounded">src/content/posts/republish/</code>
+            </p>
+          </div>
+          <!-- 查看文章链接，由 JavaScript 动态设置 href -->
+          <a
+            id="article-link"
+            href="#"
+            class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-(--primary) hover:bg-(--primary-dark) text-white text-sm rounded-lg transition"
+          >
+            <Icon name="material-symbols:open-in-new" is:inline />
+            查看文章
+          </a>
+        </div>
+        
+        <!-- 错误提示容器 (默认隐藏) -->
+        <div id="republish-error" class="mt-6 hidden p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+          <p class="text-red-600 dark:text-red-400 text-sm">
+            请输入有效的文章链接
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 转载文章列表卡片 -->
+    <div class="card card-hover scale-animation">
+      <div class="p-6">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+          <Icon name="material-symbols:article" is:inline class="text-(--primary)" />
+          {i18n(I18nKey.republishAllPosts)}
+        </h2>
+        
+        <!-- 如果没有转载文章，显示空状态 -->
+        {republishPosts.length === 0 ? (
+          <div class="text-center py-12">
+            <Icon name="material-symbols:file-open" is:inline class="text-6xl text-gray-300 dark:text-gray-600 mb-4" />
+            <p class="text-gray-500 dark:text-gray-400">
+              {i18n(I18nKey.republishNoPosts)}
+            </p>
+          </div>
+        ) : (
+          <!-- 如果有转载文章，显示文章列表 -->
+          <div class="space-y-4">
+            {republishPosts.map((post) => (
+              <a
+                href={url(`/posts/${post.id}/`)}
+                class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition group"
+              >
+                <!-- 图标 -->
+                <div class="flex-shrink-0 w-12 h-12 bg-(--primary) rounded-lg flex items-center justify-center">
+                  <Icon name="material-symbols:repeat" is:inline class="text-white" />
+                </div>
+                <!-- 文章信息 -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-gray-900 dark:text-white truncate group-hover:text-(--primary) transition">
+                    {post.data.title}
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                    {post.data.description}
+                  </p>
+                  <div class="flex items-center gap-3 mt-2">
+                    <span class="text-xs text-gray-400">
+                      {new Date(post.data.published).toLocaleDateString("zh-CN")}
+                    </span>
+                    {post.data.tags && post.data.tags.includes("转载") && (
+                      <span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-xs rounded">
+                        转载
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <!-- 箭头图标 -->
+                <Icon name="material-symbols:chevron-right" is:inline class="text-gray-400 group-hover:text-(--primary) group-hover:translate-x-1 transition" />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</MainGridLayout>
+
+<!-- 前端 JavaScript 代码 -->
+<!-- is:inline 属性让代码直接嵌入 HTML，不依赖外部文件加载 -->
+<script is:inline>
+  // 立即执行函数，避免全局变量污染
+  (function() {
+    // 获取页面元素
+    var urlInput = document.getElementById('republish-url');        // 文章链接输入框
+    var republishBtn = document.getElementById('republish-btn');     // 开始转载按钮
+    var progressContainer = document.getElementById('progress-container'); // 进度条容器
+    var progressBar = document.getElementById('progress-bar');       // 进度条
+    var progressText = document.getElementById('progress-text');     // 进度文字
+    var successContainer = document.getElementById('success-container'); // 成功提示容器
+    var errorDiv = document.getElementById('republish-error');       // 错误提示容器
+    var successMessage = document.getElementById('success-message'); // 成功消息文本
+    var articleLink = document.getElementById('article-link');      // 查看文章链接
+
+    // 检查必要元素是否存在
+    if (!urlInput || !republishBtn || !progressContainer || !progressBar || !progressText || !successContainer || !errorDiv) {
+      console.error('Republish page elements not found');
+      return;
+    }
+
+    // 显示进度条
+    function showProgress() {
+      progressContainer.classList.remove('hidden');  // 显示进度条
+      successContainer.classList.add('hidden');      // 隐藏成功提示
+      errorDiv.classList.add('hidden');              // 隐藏错误提示
+      republishBtn.disabled = true;                  // 禁用按钮
+      progressBar.style.width = '0%';               // 重置进度条
+      progressText.textContent = '正在解析链接...';   // 设置进度文字
+    }
+
+    // 更新进度条
+    function updateProgress(percent, text) {
+      progressBar.style.width = percent + '%';
+      progressText.textContent = text;
+    }
+
+    // 显示成功提示
+    function showSuccess(data) {
+      progressContainer.classList.add('hidden');     // 隐藏进度条
+      successContainer.classList.remove('hidden');   // 显示成功提示
+      republishBtn.disabled = false;                // 启用按钮
+      progressBar.style.width = '100%';             // 进度条满
+      
+      // 动态更新成功消息和文章链接
+      if (successMessage) {
+        successMessage.textContent = '转载成功！文章已自动生成: ' + data.title;
+      }
+      if (articleLink) {
+        articleLink.href = data.url;
+        articleLink.textContent = '查看文章';
+      }
+      
+      // 2秒后自动刷新页面，显示新文章
+      setTimeout(function() {
+        location.reload();
+      }, 2000);
+    }
+
+    // 显示错误提示
+    function showError(message) {
+      progressContainer.classList.add('hidden');     // 隐藏进度条
+      successContainer.classList.add('hidden');       // 隐藏成功提示
+      errorDiv.classList.remove('hidden');           // 显示错误提示
+      errorDiv.querySelector('p').textContent = message; // 设置错误消息
+      republishBtn.disabled = false;                 // 启用按钮
+    }
+
+    // 按钮点击事件处理
+    republishBtn.addEventListener('click', function() {
+      try {
+        // 获取输入的链接
+        var inputUrl = urlInput.value.trim();
+        
+        // 检查链接是否为空
+        if (!inputUrl) {
+          showError('请输入要转载的文章链接');
+          return;
+        }
+
+        // 验证链接格式是否正确
+        try {
+          new URL(inputUrl);
+        } catch (e) {
+          showError('请输入有效的链接地址');
+          return;
+        }
+
+        // 显示进度条
+        showProgress();
+
+        // 模拟进度条动画（每200ms增加5%）
+        var progressInterval = setInterval(function() {
+          var currentWidth = parseInt(progressBar.style.width) || 0;
+          if (currentWidth < 90) {
+            progressBar.style.width = (currentWidth + 5) + '%';
+          }
+        }, 200);
+
+        // 调用后端 API 进行转载（注意：项目配置了 trailingSlash: always，URL 需要以 / 结尾）
+        fetch('/api/republish/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ url: inputUrl })
+        }).then(function(response) {
+          // API 响应回来后停止进度条动画
+          clearInterval(progressInterval);
+          progressBar.style.width = '100%';
+          return response.json();
+        }).then(function(result) {
+          // 处理 API 返回结果
+          if (result.success) {
+            showSuccess(result.data);
+          } else {
+            showError(result.message || '转载失败');
+          }
+        }).catch(function(error) {
+          // 捕获网络错误
+          clearInterval(progressInterval);
+          showError('网络错误，请检查开发服务器是否运行');
+          console.error('Republish API error:', error);
+        });
+
+      } catch (err) {
+        // 捕获其他错误
+        console.error('Error in republish click handler:', err);
+        republishBtn.disabled = false;
+        progressContainer.classList.add('hidden');
+      }
+    });
+  })();
+</script>

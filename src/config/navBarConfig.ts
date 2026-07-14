@@ -27,6 +27,8 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			LinkPreset.Categories,
 			// 标签
 			LinkPreset.Tags,
+			// 转载
+			LinkPreset.Republish,
 		],
 	});
 

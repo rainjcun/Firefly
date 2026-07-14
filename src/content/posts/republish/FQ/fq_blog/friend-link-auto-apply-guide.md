@@ -8,9 +8,11 @@ tags:
   - 友链
   - 自动化
   - Firefly
-category: 教程
+category: "转载"
 draft: false
 author: fqzlr
+originalUrl: ""
+originalAuthor: "原作者"
 ---
 
 # Firefly 友链自助申请自动化 

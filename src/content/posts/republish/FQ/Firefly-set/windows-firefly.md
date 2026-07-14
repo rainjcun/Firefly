@@ -3,9 +3,11 @@ title: Firefly 博客搭建教程
 published: 2026-04-29
 description: 前置准备｜Windows 搭建 Firefly 必备环境全套安装
 image: /src/assets/images/cover.avif
-tags: [Firefly, 环境安装, Windows, 博客搭建]
-category: Firefly 博客教程
+tags: ["转载", Firefly, 环境安装, Windows, 博客搭建]
+category: "转载"
 draft: false
+originalUrl: ""
+originalAuthor: "原作者"
 ---
 # Firefly 博客部署教程
 <iframe width="100%" height="468" src="//player.bilibili.com/player.html?bvid=BV1hX9XBKEhm&p=1&autoplay=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>

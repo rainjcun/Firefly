@@ -335,4 +335,16 @@ export const ru: Translation = {
 	[Key.passwordError]: "Неверный пароль, попробуйте снова.",
 	[Key.passwordProtectedRss]:
 		"Эта статья зашифрована. Пожалуйста, посетите сайт для просмотра.",
+
+	// Страница републикации
+	[Key.republish]: "Републикация",
+	[Key.republishTitle]: "Републикация статей",
+	[Key.republishDescription]: "Быстро опубликовать отличные статьи на вашем блоге",
+	[Key.republishLinkInput]: "Ссылка на статью",
+	[Key.republishLinkPlaceholder]: "Введите ссылку на статью для републикации...",
+	[Key.republishSubmit]: "Начать републикацию",
+	[Key.republishOriginalLink]: "Оригинальная ссылка",
+	[Key.republishAuthor]: "Оригинальный автор",
+	[Key.republishAllPosts]: "Все републикации",
+	[Key.republishNoPosts]: "Пока нет републикаций",
 };

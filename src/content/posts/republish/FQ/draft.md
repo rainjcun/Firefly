@@ -1,9 +1,11 @@
 ---
 title: Draft Example
 published: 2022-07-01
-tags: [Markdown, Blogging, Demo]
-category: Examples
+tags: ["转载", Markdown, Blogging, Demo]
+category: "转载"
 draft: true
+originalUrl: ""
+originalAuthor: "原作者"
 ---
 
 # This Article is a Draft

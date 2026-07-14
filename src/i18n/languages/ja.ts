@@ -333,4 +333,16 @@ export const ja: Translation = {
 	[Key.passwordError]: "パスワードが間違っています。もう一度お試しください。",
 	[Key.passwordProtectedRss]:
 		"この記事は暗号化されています。ウェブサイトにアクセスしてご覧ください。",
+
+	// 転載ページ
+	[Key.republish]: "転載",
+	[Key.republishTitle]: "転載記事",
+	[Key.republishDescription]: "優れた記事をブログにすばやく転載",
+	[Key.republishLinkInput]: "記事リンク",
+	[Key.republishLinkPlaceholder]: "転載する記事のリンクを入力...",
+	[Key.republishSubmit]: "転載開始",
+	[Key.republishOriginalLink]: "元のリンク",
+	[Key.republishAuthor]: "原作者",
+	[Key.republishAllPosts]: "すべての転載記事",
+	[Key.republishNoPosts]: "転載記事はまだありません",
 };

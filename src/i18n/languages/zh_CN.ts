@@ -323,4 +323,16 @@ export const zh_CN: Translation = {
 	[Key.passwordSubmit]: "解锁",
 	[Key.passwordError]: "密码错误，请重试。",
 	[Key.passwordProtectedRss]: "本文已加密保护，请访问网站查看。",
+
+	// 转载页面
+	[Key.republish]: "转载",
+	[Key.republishTitle]: "转载文章",
+	[Key.republishDescription]: "快速转载优秀文章到你的博客",
+	[Key.republishLinkInput]: "文章链接",
+	[Key.republishLinkPlaceholder]: "请输入要转载的文章链接...",
+	[Key.republishSubmit]: "开始转载",
+	[Key.republishOriginalLink]: "原文链接",
+	[Key.republishAuthor]: "原作者",
+	[Key.republishAllPosts]: "所有转载文章",
+	[Key.republishNoPosts]: "暂无转载文章",
 };

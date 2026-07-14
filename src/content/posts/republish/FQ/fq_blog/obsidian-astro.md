@@ -7,9 +7,11 @@ image: https://tu.682000.xyz/file/blog/wenzhang/1776516130544_image.png
 tags:
   - Obsidian
   - astro
-category: 分类
+category: "转载"
 draft: false
 author: fqzlr
+originalUrl: ""
+originalAuthor: "原作者"
 ---
 Obsidian + Astro Composer + Git 插件 同步 Astro 博客到 GitHub 完整教程
 

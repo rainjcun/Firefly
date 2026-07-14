@@ -4,10 +4,12 @@ published: 2026-05-07
 updated: 2026-05-07
 description: 搭建属于自己的图床
 image: /src/assets/images/cover.avif
-tags: [图床]
-category: 博客
+tags: ["转载", 图床]
+category: "转载"
 draft: false
 author: fqzlr
+originalUrl: ""
+originalAuthor: "原作者"
 ---
 # Cloudflare Workers 部署 Cloudflare‑ImgBed 图床完整教程
 

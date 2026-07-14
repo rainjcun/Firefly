@@ -325,4 +325,16 @@ export const zh_TW: Translation = {
 	[Key.passwordSubmit]: "解鎖",
 	[Key.passwordError]: "密碼錯誤，請重試。",
 	[Key.passwordProtectedRss]: "本文已加密保護，請訪問網站查看。",
+
+	// 轉載頁面
+	[Key.republish]: "轉載",
+	[Key.republishTitle]: "轉載文章",
+	[Key.republishDescription]: "快速轉載優秀文章到你的部落格",
+	[Key.republishLinkInput]: "文章連結",
+	[Key.republishLinkPlaceholder]: "請輸入要轉載的文章連結...",
+	[Key.republishSubmit]: "開始轉載",
+	[Key.republishOriginalLink]: "原文連結",
+	[Key.republishAuthor]: "原作者",
+	[Key.republishAllPosts]: "所有轉載文章",
+	[Key.republishNoPosts]: "暫無轉載文章",
 };

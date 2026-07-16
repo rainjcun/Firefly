@@ -63,7 +63,11 @@ export async function POST({ request }: APIContext) {
 
 		// 4. 提取文章标题
 		let title = $("h1").first().text().trim();
-		if (!title) title = $("title").text().replace(/[-_|].*$/, "").trim();
+		if (!title)
+			title = $("title")
+				.text()
+				.replace(/[-_|].*$/, "")
+				.trim();
 		if (!title) title = "转载文章";
 
 		// 5. 提取原作者信息
@@ -171,7 +175,8 @@ ${contentCleaned}`;
 		return new Response(
 			JSON.stringify({
 				success: true,
-				message: "转载内容已生成！请下载 Markdown 文件并保存到项目的 src/content/posts/republish/ 目录中。",
+				message:
+					"转载内容已生成！请下载 Markdown 文件并保存到项目的 src/content/posts/republish/ 目录中。",
 				data: {
 					title,
 					author,

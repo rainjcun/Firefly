@@ -338,7 +338,8 @@ export const en: Translation = {
 	// Republish Page
 	[Key.republish]: "Republish",
 	[Key.republishTitle]: "Republish Articles",
-	[Key.republishDescription]: "Quickly republish excellent articles to your blog",
+	[Key.republishDescription]:
+		"Quickly republish excellent articles to your blog",
 	[Key.republishLinkInput]: "Article Link",
 	[Key.republishLinkPlaceholder]: "Enter the article link to republish...",
 	[Key.republishSubmit]: "Start Republish",

@@ -8,18 +8,18 @@
 //   2. 显示所有已转载的文章列表
 // ============================================
 
-// 导入依赖模块
-import { Icon } from "astro-icon/components";           // 图标组件
-import I18nKey from "@i18n/i18nKey";                    // 多语言键名
-import { i18n } from "@i18n/translation";                // 多语言翻译函数
+import I18nKey from "@i18n/i18nKey"; // 多语言键名
+import { i18n } from "@i18n/translation"; // 多语言翻译函数
 import MainGridLayout from "@layouts/MainGridLayout.astro"; // 主布局组件
-import { getSortedPostsList } from "@/utils/content-utils";  // 获取文章列表工具函数
-import { url } from "@/utils/url-utils";                     // URL 生成工具函数
+// 导入依赖模块
+import { Icon } from "astro-icon/components"; // 图标组件
+import { getSortedPostsList } from "@/utils/content-utils"; // 获取文章列表工具函数
+import { url } from "@/utils/url-utils"; // URL 生成工具函数
 
 // 获取所有文章，并筛选出带"转载"或"repost"标签的文章
 const allPosts = await getSortedPostsList();
-const republishPosts = allPosts.filter(post => 
-  post.data.tags && post.data.tags.some(tag => tag === "转载" || tag === "repost")
+const republishPosts = allPosts.filter((post) =>
+	post.data.tags?.some((tag) => tag === "转载" || tag === "repost"),
 );
 ---
 

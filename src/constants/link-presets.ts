@@ -73,8 +73,8 @@ export const LinkPresets: { [key in LinkPreset]: NavBarLink } = {
 	},
 	// 转载页（新增）
 	[LinkPreset.Republish]: {
-		name: i18n(I18nKey.republish),      // 显示名称，使用多语言
-		url: "/republish/",                  // 页面路径
-		icon: "material-symbols:repeat",    // 图标
+		name: i18n(I18nKey.republish), // 显示名称，使用多语言
+		url: "/republish/", // 页面路径
+		icon: "material-symbols:repeat", // 图标
 	},
 };

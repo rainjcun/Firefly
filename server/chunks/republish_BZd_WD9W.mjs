@@ -14025,7 +14025,8 @@ async function POST({ request }) {
     const html2 = await response.text();
     const $2 = load(html2);
     let title = $2("h1").first().text().trim();
-    if (!title) title = $2("title").text().replace(/[-_|].*$/, "").trim();
+    if (!title)
+      title = $2("title").text().replace(/[-_|].*$/, "").trim();
     if (!title) title = "转载文章";
     let author = "";
     const authorSelectors = [

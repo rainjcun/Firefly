@@ -1,7 +1,7 @@
 globalThis.process ??= {};
 globalThis.process.env ??= {};
 import { env } from "cloudflare:workers";
-import { A as AstroError, e as InvalidComponentArgs, r as removeQueryString, N as NoImageMetadata, j as isRemoteAllowed, F as FailedToFetchRemoteImageDimensions, R as RemoteImageNotAllowed, l as joinPaths, E as ExpectedImage, k as isRemotePath, L as LocalImageUsedWrongly, g as MissingImageDimension, h as UnsupportedImageFormat, d as IncompatibleDescriptorOptions, U as UnsupportedImageConversion, a as ExpectedImageOptions, b as ExpectedNotESMImage, f as InvalidImageService, I as ImageMissingAlt, m as maybeRenderHead, i as addAttribute, s as spreadAttributes, n as renderTemplate, c as FontFamilyNotFound, u as unescapeHTML, M as MissingGetFontFileRequestUrl } from "./worker-entry_CnzGDZfL.mjs";
+import { A as AstroError, e as InvalidComponentArgs, r as removeQueryString, N as NoImageMetadata, j as isRemoteAllowed, F as FailedToFetchRemoteImageDimensions, R as RemoteImageNotAllowed, l as joinPaths, E as ExpectedImage, k as isRemotePath, L as LocalImageUsedWrongly, g as MissingImageDimension, h as UnsupportedImageFormat, d as IncompatibleDescriptorOptions, U as UnsupportedImageConversion, a as ExpectedImageOptions, b as ExpectedNotESMImage, f as InvalidImageService, I as ImageMissingAlt, m as maybeRenderHead, i as addAttribute, s as spreadAttributes, n as renderTemplate, c as FontFamilyNotFound, u as unescapeHTML, M as MissingGetFontFileRequestUrl } from "./worker-entry_lE6LfvAD.mjs";
 function validateArgs(args) {
   if (args.length !== 3) return false;
   if (!args[0] || typeof args[0] !== "object") return false;
@@ -1540,7 +1540,7 @@ async function getConfiguredImageService() {
   if (!globalThis?.astroAsset?.imageService) {
     const { default: service } = await import(
       // @ts-expect-error
-      "./image-service-workerd_BvqXVZ9I.mjs"
+      "./image-service-workerd_D6a1SoB9.mjs"
     ).catch((e) => {
       const error = new AstroError(InvalidImageService);
       error.cause = e;

@@ -1,5 +1,5 @@
 name = "firefly"
-compatibility_date = "2026-06-21"
+compatibility_date = "2026-06-05"
 compatibility_flags = ["nodejs_compat"]
 
 [assets]

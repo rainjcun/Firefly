@@ -75,26 +75,40 @@ const republishPosts = allPosts.filter(post =>
             <div class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
               <Icon name="material-symbols:check" is:inline class="text-green-600 dark:text-green-400" />
             </div>
-            <span class="font-semibold text-green-600 dark:text-green-400">转载完成！</span>
+            <span class="font-semibold text-green-600 dark:text-green-400">Markdown 已生成！</span>
           </div>
-          <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-            <!-- 成功消息，由 JavaScript 动态填充文章标题 -->
-            <p id="success-message" class="text-sm text-green-700 dark:text-green-300 mb-3">
-              文章已自动生成，页面将在 2 秒后刷新...
-            </p>
-            <p class="text-xs text-green-600 dark:text-green-400">
-              文件已保存到: <code class="bg-green-200 dark:bg-green-800 px-1 rounded">src/content/posts/republish/</code>
-            </p>
+
+          <!-- 文章标题 -->
+          <p id="success-title" class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"></p>
+
+          <!-- Markdown 预览区域 -->
+          <div class="mb-3">
+            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">预览：</label>
+            <pre id="markdown-preview" class="max-h-64 overflow-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap break-words"></pre>
           </div>
-          <!-- 查看文章链接，由 JavaScript 动态设置 href -->
-          <a
-            id="article-link"
-            href="#"
-            class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-(--primary) hover:bg-(--primary-dark) text-white text-sm rounded-lg transition"
-          >
-            <Icon name="material-symbols:open-in-new" is:inline />
-            查看文章
-          </a>
+
+          <!-- 操作按钮 -->
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button
+              id="download-btn"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-(--primary) hover:bg-(--primary-dark) text-white text-sm rounded-lg transition"
+            >
+              <Icon name="material-symbols:download" is:inline />
+              下载 .md 文件
+            </button>
+            <button
+              id="copy-btn"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-lg transition"
+            >
+              <Icon name="material-symbols:content-copy" is:inline />
+              复制到剪贴板
+            </button>
+          </div>
+
+          <!-- 使用提示 -->
+          <p class="text-xs text-gray-500 dark:text-gray-400">
+            下载后将文件保存到项目的 <code class="bg-gray-200 dark:bg-gray-800 px-1 rounded">src/content/posts/republish/</code> 目录，然后提交到 GitHub 即可自动部署。
+          </p>
         </div>
         
         <!-- 错误提示容器 (默认隐藏) -->
@@ -167,85 +181,116 @@ const republishPosts = allPosts.filter(post =>
 <!-- 前端 JavaScript 代码 -->
 <!-- is:inline 属性让代码直接嵌入 HTML，不依赖外部文件加载 -->
 <script is:inline>
-  // 立即执行函数，避免全局变量污染
   (function() {
-    // 获取页面元素
-    var urlInput = document.getElementById('republish-url');        // 文章链接输入框
-    var republishBtn = document.getElementById('republish-btn');     // 开始转载按钮
-    var progressContainer = document.getElementById('progress-container'); // 进度条容器
-    var progressBar = document.getElementById('progress-bar');       // 进度条
-    var progressText = document.getElementById('progress-text');     // 进度文字
-    var successContainer = document.getElementById('success-container'); // 成功提示容器
-    var errorDiv = document.getElementById('republish-error');       // 错误提示容器
-    var successMessage = document.getElementById('success-message'); // 成功消息文本
-    var articleLink = document.getElementById('article-link');      // 查看文章链接
+    var urlInput = document.getElementById('republish-url');
+    var republishBtn = document.getElementById('republish-btn');
+    var progressContainer = document.getElementById('progress-container');
+    var progressBar = document.getElementById('progress-bar');
+    var progressText = document.getElementById('progress-text');
+    var successContainer = document.getElementById('success-container');
+    var errorDiv = document.getElementById('republish-error');
+    var successTitle = document.getElementById('success-title');
+    var markdownPreview = document.getElementById('markdown-preview');
+    var downloadBtn = document.getElementById('download-btn');
+    var copyBtn = document.getElementById('copy-btn');
 
-    // 检查必要元素是否存在
     if (!urlInput || !republishBtn || !progressContainer || !progressBar || !progressText || !successContainer || !errorDiv) {
       console.error('Republish page elements not found');
       return;
     }
 
-    // 显示进度条
+    // 存储当前生成的 markdown 内容和文件名
+    var currentMarkdown = '';
+    var currentFileName = '';
+
     function showProgress() {
-      progressContainer.classList.remove('hidden');  // 显示进度条
-      successContainer.classList.add('hidden');      // 隐藏成功提示
-      errorDiv.classList.add('hidden');              // 隐藏错误提示
-      republishBtn.disabled = true;                  // 禁用按钮
-      progressBar.style.width = '0%';               // 重置进度条
-      progressText.textContent = '正在解析链接...';   // 设置进度文字
+      progressContainer.classList.remove('hidden');
+      successContainer.classList.add('hidden');
+      errorDiv.classList.add('hidden');
+      republishBtn.disabled = true;
+      progressBar.style.width = '0%';
+      progressText.textContent = '正在解析链接...';
     }
 
-    // 更新进度条
     function updateProgress(percent, text) {
       progressBar.style.width = percent + '%';
       progressText.textContent = text;
     }
 
-    // 显示成功提示
     function showSuccess(data) {
-      progressContainer.classList.add('hidden');     // 隐藏进度条
-      successContainer.classList.remove('hidden');   // 显示成功提示
-      republishBtn.disabled = false;                // 启用按钮
-      progressBar.style.width = '100%';             // 进度条满
-      
-      // 动态更新成功消息和文章链接
-      if (successMessage) {
-        successMessage.textContent = '转载成功！文章已自动生成: ' + data.title;
+      progressContainer.classList.add('hidden');
+      successContainer.classList.remove('hidden');
+      republishBtn.disabled = false;
+      progressBar.style.width = '100%';
+
+      // 保存 markdown 内容和文件名
+      currentMarkdown = data.markdown;
+      currentFileName = data.fileName;
+
+      // 显示文章标题
+      if (successTitle) {
+        successTitle.textContent = '「' + data.title + '」— 作者: ' + data.author;
       }
-      if (articleLink) {
-        articleLink.href = data.url;
-        articleLink.textContent = '查看文章';
+
+      // 显示 markdown 预览（截取前 500 字符）
+      if (markdownPreview) {
+        var previewText = data.markdown.length > 500
+          ? data.markdown.substring(0, 500) + '\n\n... (已截断，完整内容请下载)'
+          : data.markdown;
+        markdownPreview.textContent = previewText;
       }
-      
-      // 2秒后自动刷新页面，显示新文章
-      setTimeout(function() {
-        location.reload();
-      }, 2000);
     }
 
-    // 显示错误提示
     function showError(message) {
-      progressContainer.classList.add('hidden');     // 隐藏进度条
-      successContainer.classList.add('hidden');       // 隐藏成功提示
-      errorDiv.classList.remove('hidden');           // 显示错误提示
-      errorDiv.querySelector('p').textContent = message; // 设置错误消息
-      republishBtn.disabled = false;                 // 启用按钮
+      progressContainer.classList.add('hidden');
+      successContainer.classList.add('hidden');
+      errorDiv.classList.remove('hidden');
+      errorDiv.querySelector('p').textContent = message;
+      republishBtn.disabled = false;
     }
 
-    // 按钮点击事件处理
+    // 下载按钮点击事件
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', function() {
+        if (!currentMarkdown || !currentFileName) return;
+        var blob = new Blob([currentMarkdown], { type: 'text/markdown;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = currentFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // 复制按钮点击事件
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function() {
+        if (!currentMarkdown) return;
+        navigator.clipboard.writeText(currentMarkdown).then(function() {
+          var originalText = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> 已复制!';
+          setTimeout(function() {
+            copyBtn.innerHTML = originalText;
+          }, 2000);
+        }).catch(function() {
+          alert('复制失败，请手动选中内容复制');
+        });
+      });
+    }
+
+    // 转载按钮点击事件
     republishBtn.addEventListener('click', function() {
       try {
-        // 获取输入的链接
         var inputUrl = urlInput.value.trim();
-        
-        // 检查链接是否为空
+
         if (!inputUrl) {
           showError('请输入要转载的文章链接');
           return;
         }
 
-        // 验证链接格式是否正确
         try {
           new URL(inputUrl);
         } catch (e) {
@@ -253,10 +298,8 @@ const republishPosts = allPosts.filter(post =>
           return;
         }
 
-        // 显示进度条
         showProgress();
 
-        // 模拟进度条动画（每200ms增加5%）
         var progressInterval = setInterval(function() {
           var currentWidth = parseInt(progressBar.style.width) || 0;
           if (currentWidth < 90) {
@@ -264,7 +307,6 @@ const republishPosts = allPosts.filter(post =>
           }
         }, 200);
 
-        // 调用后端 API 进行转载（注意：项目配置了 trailingSlash: always，URL 需要以 / 结尾）
         fetch('/api/republish/', {
           method: 'POST',
           headers: {
@@ -272,26 +314,22 @@ const republishPosts = allPosts.filter(post =>
           },
           body: JSON.stringify({ url: inputUrl })
         }).then(function(response) {
-          // API 响应回来后停止进度条动画
           clearInterval(progressInterval);
           progressBar.style.width = '100%';
           return response.json();
         }).then(function(result) {
-          // 处理 API 返回结果
           if (result.success) {
             showSuccess(result.data);
           } else {
             showError(result.message || '转载失败');
           }
         }).catch(function(error) {
-          // 捕获网络错误
           clearInterval(progressInterval);
-          showError('网络错误，请检查开发服务器是否运行');
+          showError('网络错误，请稍后重试');
           console.error('Republish API error:', error);
         });
 
       } catch (err) {
-        // 捕获其他错误
         console.error('Error in republish click handler:', err);
         republishBtn.disabled = false;
         progressContainer.classList.add('hidden');
